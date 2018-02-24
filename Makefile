@@ -38,7 +38,7 @@ submit-dev:
 	cl edit gen-answers-$(EXPERIMENT) -T cs224n-win18-dev --description $(DESCRIPTION)
 
 clean:
-	cl detach run-eval gen-answers code best_checkpoint
+	cl detach run-eval-$(EXPERIMENT) gen-answers-$(EXPERIMENT) code best_checkpoint
 
 local-sanity:
 	python code/main.py --mode=official_eval \
@@ -51,3 +51,6 @@ local-dev:
 		--json_in_path=data/dev-v1.1.json \
 		--ckpt_load_dir=experiments/baseline/best_checkpoint
 	python code/evaluate.py data/dev-v1.1.json predictions.json
+
+show-examples:
+	python code/main.py --experiment_name=baseline --mode=show_examples
