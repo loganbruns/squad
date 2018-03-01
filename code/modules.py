@@ -165,7 +165,7 @@ class BasicAttn(object):
         with vs.variable_scope("BasicAttn"):
 
             # Calculate attention distribution
-            W_a = tf.get_variable('W_attn', initializer=tf.eye(self.value_vec_size))
+            W_a = tf.get_variable('W_attn', shape=(self.value_vec_size, self.value_vec_size), initializer=tf.contrib.layers.xavier_initializer())
             values_t = tf.transpose(values, perm=[0, 2, 1]) # (batch_size, value_vec_size, num_values)
             attn_logits = tf.matmul(tf.tensordot(keys, W_a, 1), values_t) # shape (batch_size, num_keys, num_values)
             attn_logits_mask = tf.expand_dims(values_mask, 1) # shape (batch_size, 1, num_values)
