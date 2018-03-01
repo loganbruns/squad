@@ -127,9 +127,6 @@ class BasicAttn(object):
     We choose to use general terminology of keys and values in this module
     (rather than context and question) to avoid confusion if you reuse this
     module with other inputs.
-
-    Note: this has been extended to use a bilinear form where there is
-    a weight matrix (W_a) between the keys and values product.
     """
 
     def __init__(self, keep_prob, key_vec_size, value_vec_size):
@@ -165,9 +162,8 @@ class BasicAttn(object):
         with vs.variable_scope("BasicAttn"):
 
             # Calculate attention distribution
-            W_a = tf.get_variable('W_attn', shape=(self.value_vec_size, self.value_vec_size), initializer=tf.contrib.layers.xavier_initializer())
             values_t = tf.transpose(values, perm=[0, 2, 1]) # (batch_size, value_vec_size, num_values)
-            attn_logits = tf.matmul(tf.tensordot(keys, W_a, 1), values_t) # shape (batch_size, num_keys, num_values)
+            attn_logits = tf.matmul(keys, values_t) # shape (batch_size, num_keys, num_values)
             attn_logits_mask = tf.expand_dims(values_mask, 1) # shape (batch_size, 1, num_values)
             _, attn_dist = masked_softmax(attn_logits, attn_logits_mask, 2) # shape (batch_size, num_keys, num_values). take softmax over values
 
