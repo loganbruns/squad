@@ -1,5 +1,5 @@
-EXPERIMENT=v1
-DESCRIPTION="$(EXPERIMENT): v1 model- 20 epochs"
+EXPERIMENT=v3
+DESCRIPTION="$(EXPERIMENT): architecture iteration"
 WORKSPACE=main::cs224n-lbruns
 
 all:
@@ -39,7 +39,7 @@ submit-dev:
 	cl edit -w $(WORKSPACE) gen-answers-$(EXPERIMENT) -T cs224n-win18-dev --description $(DESCRIPTION)
 
 clean:
-	cl detach run-eval-$(EXPERIMENT) gen-answers-$(EXPERIMENT) code best_checkpoint
+	cl detach -w $(WORKSPACE) run-eval-$(EXPERIMENT) gen-answers-$(EXPERIMENT) code best_checkpoint
 
 local-sanity:
 	python code/main.py --mode=official_eval \
