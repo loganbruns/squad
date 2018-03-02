@@ -199,3 +199,71 @@ def masked_softmax(logits, mask, dim):
     masked_logits = tf.add(logits, exp_mask) # where there's padding, set logits to -large
     prob_dist = tf.nn.softmax(masked_logits, dim)
     return masked_logits, prob_dist
+
+
+class MultiHeadedAttn(object):
+    """Module for multiheaded attention.
+
+    Note: in this module we use the terminology of "keys" and "values" (see lectures).
+    In the terminology of "X attends to Y", "keys attend to values".
+
+    In the baseline model, the keys are the context hidden states
+    and the values are the question hidden states.
+
+    We choose to use general terminology of keys and values in this module
+    (rather than context and question) to avoid confusion if you reuse this
+    module with other inputs.
+    """
+
+    def __init__(self, keep_prob, key_vec_size, value_vec_size, num_values, num_heads=8):
+        """
+        Inputs:
+          keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
+          key_vec_size: size of the key vectors. int
+          value_vec_size: size of the value vectors. int
+        """
+        self.keep_prob = keep_prob
+        self.key_vec_size = key_vec_size
+        self.value_vec_size = value_vec_size
+        self.num_values = num_values
+        self.num_heads = num_heads
+        self.scaled_attn = [BasicAttn(keep_prob, key_vec_size / num_heads, value_vec_size / num_heads) for _ in range(num_heads)]
+
+    def build_graph(self, values, values_mask, keys):
+        """
+        Keys attend to values.
+        For each key, return an attention distribution and an attention output vector.
+
+        Inputs:
+          values: Tensor shape (batch_size, num_values, value_vec_size).
+          values_mask: Tensor shape (batch_size, num_values).
+            1s where there's real input, 0s where there's padding
+          keys: Tensor shape (batch_size, num_keys, value_vec_size)
+
+        Outputs:
+          attn_dist: Tensor shape (batch_size, num_keys, num_values).
+            For each key, the distribution should sum to 1,
+            and should be 0 in the value locations that correspond to padding.
+          output: Tensor shape (batch_size, num_keys, hidden_size).
+            This is the attention output; the weighted sum of the values
+            (using the attention distribution as weights).
+        """
+        with vs.variable_scope("MultiHeadedAttn"):
+
+
+            W_keys = tf.get_variable('W_keys', shape=(self.value_vec_size, self.value_vec_size), initializer=tf.contrib.layers.xavier_initializer())
+            shape = keys.get_shape().as_list() + [self.num_heads]
+            shape[2] /= self.num_heads
+            shape[0] = -1
+            scaled_keys = tf.unstack(tf.reshape(tf.tensordot(keys, W_keys, 1), shape), axis=3)
+            W_values = tf.get_variable('W_values', shape=(self.value_vec_size, self.value_vec_size), initializer=tf.contrib.layers.xavier_initializer())
+            shape = values.get_shape().as_list() + [self.num_heads]
+            shape[2] /= self.num_heads
+            shape[0] = -1
+            scaled_values = tf.unstack(tf.reshape(tf.tensordot(values, W_values, 1), shape), axis=3)
+
+            # shape (batch_size, num_keys, hidden_size, num_heads)
+            outputs = tf.stack([self.scaled_attn[i].build_graph(scaled_values[i], values_mask, scaled_keys[i])[1] for i in range(self.num_heads)], axis=3)
+
+            # shape (batch_size, num_keys, hidden_size)
+            return tf.reshape(outputs, (-1, self.num_values, self.value_vec_size))
