@@ -336,3 +336,71 @@ class MultiHeadedAttn(object):
             shape[0] = -1
             return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])
 
+
+class BiDafAttn(object):
+    """Module for BiDAF attention.
+    """
+
+    def __init__(self, keep_prob, qn_vec_size, context_vec_size):
+        """
+        Inputs:
+          keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
+          qn_vec_size: size of the question vectors. int
+          context_vec_size: size of the context vectors. int
+        """
+        self.keep_prob = keep_prob
+        self.qn_vec_size = qn_vec_size
+        self.context_vec_size = context_vec_size
+
+    def build_graph(self, qns, qns_mask, contexts, contexts_mask):
+        """
+
+        Inputs:
+          contexts: Tensor shape (batch_size, num_contexts, context_vec_size).
+          contexts_mask: Tensor shape (batch_size, num_contexts).
+            1s where there's real input, 0s where there's padding
+          qns: Tensor shape (batch_size, num_qns, context_vec_size)
+          qns_mask: Tensor shape (batch_size, num_qns).
+            1s where there's real input, 0s where there's padding
+
+        Outputs:
+          output: Tensor shape (batch_size, num_qns, 8 * hidden_size).
+            This is the attention output
+        """
+        with vs.variable_scope("BiDafAttn"):
+
+            # Calculate similarity
+            num_contexts = contexts.get_shape().as_list()[1]
+            num_qns = qns.get_shape().as_list()[1]
+            W_sim1 = tf.get_variable('W_sim1', shape=(self.context_vec_size, 1), initializer=tf.contrib.layers.xavier_initializer())
+            W_sim2 = tf.get_variable('W_sim2', shape=(self.context_vec_size, 1), initializer=tf.contrib.layers.xavier_initializer())
+            W_sim3 = tf.get_variable('W_sim3', shape=(self.context_vec_size, 1), initializer=tf.contrib.layers.xavier_initializer())
+
+            S = []
+            for i in xrange(num_contexts):
+                Si = []
+                for j in xrange(num_qns):
+                    ci = contexts[:,i,:]
+                    qj = qns[:,j,:]
+                    Si += [tf.matmul(ci, W_sim1) + tf.matmul(qj, W_sim2) + tf.matmul(ci * qj, W_sim3)]
+                S += [tf.squeeze(tf.stack(Si, axis=1), axis=2)]
+            S = tf.stack(S, axis=1) # shape (batch_size, num_contexts, num_qns)
+
+            # Calculate C2Q attention distribution
+            qns_attn_logits_mask = tf.expand_dims(qns_mask, 1) # shape (batch_size, 1, num_qns)
+            _, qns_attn_dist = masked_softmax(S, qns_attn_logits_mask, 2) # shape (batch_size, num_contexts, num_qns). take softmax over qns
+
+            # Use C2Q attention distribution to take weighted sum of contexts
+            a = tf.matmul(qns_attn_dist, qns) # shape (batch_size, num_contexts, qn_vec_size)
+
+            # Calculate Q2C attention distribution
+            m = tf.reduce_max(S) # shape (batch_size, num_contexts)
+            contexts_attn_logits_mask = tf.expand_dims(contexts_mask, 1) # shape (batch_size, 1, num_contexts)
+            _, contexts_attn_dist = masked_softmax(m, contexts_attn_logits_mask, 2) # shape (batch_size, num_contexts). take softmax over contexts
+
+            # Use Q2C attention distribution to take weighted sum of contexts
+            c_prime = tf.matmul(contexts_attn_dist, contexts) # shape (batch_size, context_vec_size)
+
+            b = tf.concat([contexts, a, contexts * a, contexts * c_prime], axis=2) # shape (batch_size, num_contexts, context_vec_size*8)
+
+            return b
