@@ -377,14 +377,11 @@ class BiDafAttn(object):
             W_sim3 = tf.get_variable('W_sim3', shape=(self.context_vec_size, 1), initializer=tf.contrib.layers.xavier_initializer())
 
             S = []
-            for i in xrange(num_contexts):
-                Si = []
-                for j in xrange(num_qns):
-                    ci = contexts[:,i,:]
-                    qj = qns[:,j,:]
-                    Si += [tf.matmul(ci, W_sim1) + tf.matmul(qj, W_sim2) + tf.matmul(ci * qj, W_sim3)]
-                S += [tf.squeeze(tf.stack(Si, axis=1), axis=2)]
-            S = tf.stack(S, axis=1) # shape (batch_size, num_contexts, num_qns)
+            c = tf.tensordot(contexts, W_sim1, 1)
+            q = tf.tensordot(qns, W_sim2, 1)
+            for j in xrange(num_qns):
+                S += [c + tf.expand_dims(q[:,j,:], 1) + tf.tensordot(contexts * tf.expand_dims(qns[:,j,:], 1), W_sim3, 1)]
+            S = tf.squeeze(tf.stack(S, axis=2), axis=3) # shape (batch_size, num_contexts, num_qns)
 
             # Calculate C2Q attention distribution
             qns_attn_logits_mask = tf.expand_dims(qns_mask, 1) # shape (batch_size, 1, num_qns)
