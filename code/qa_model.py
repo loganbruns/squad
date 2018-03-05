@@ -139,9 +139,12 @@ class QAModel(object):
         # _, attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens) # attn_output is shape (batch_size, context_len, hidden_size*2)
         attn_layer = MultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2, self.FLAGS.context_len)
         attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens) # attn_output is shape (batch_size, context_len, hidden_size*2)
+        attn_layer_2 = BasicAttn(self.keep_prob, self.FLAGS.embedding_size, self.FLAGS.embedding_size)
+        scaled_qn_hiddens = tf.contrib.layers.fully_connected(question_hiddens, num_outputs=self.FLAGS.embedding_size)
+        _, attn_output_2 = attn_layer_2.build_graph(scaled_qn_hiddens, self.qn_mask, self.context_embs) # attn_output is shape (batch_size, context_len, embedding_size)
  
         # Concat attn_output to context_hiddens to get blended_reps
-        blended_reps = tf.concat([context_hiddens, attn_output], axis=2) # (batch_size, context_len, hidden_size*4)
+        blended_reps = tf.concat([context_hiddens, attn_output, attn_output_2], axis=2) # (batch_size, context_len, hidden_size*4 + embedding_size)
 
         # Apply fully connected layer to each blended representation
         # Note, blended_reps_final corresponds to b' in the handout
