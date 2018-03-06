@@ -378,9 +378,13 @@ class BiDafAttn(object):
 
             S = []
             c = tf.tensordot(contexts, W_sim1, 1)
+            c.set_shape(contexts.get_shape().as_list()[0:2] + [1])
             q = tf.tensordot(qns, W_sim2, 1)
+            q.set_shape(qns.get_shape().as_list()[0:2] + [1])
             for j in xrange(num_qns):
-                S += [c + tf.expand_dims(q[:,j,:], 1) + tf.tensordot(contexts * tf.expand_dims(qns[:,j,:], 1), W_sim3, 1)]
+                v = tf.tensordot(contexts * tf.expand_dims(qns[:,j,:], 1), W_sim3, 1)
+                v.set_shape(c.get_shape())
+                S += [c + tf.expand_dims(q[:,j,:], 1) + v]
             S = tf.squeeze(tf.stack(S, axis=2), axis=3) # shape (batch_size, num_contexts, num_qns)
 
             # Calculate C2Q attention distribution
