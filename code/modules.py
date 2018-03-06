@@ -37,7 +37,7 @@ class RNNEncoder(object):
     This code uses a bidirectional LSTM, but you could experiment with other types of RNN.
     """
 
-    def __init__(self, hidden_size, keep_prob, layers=2):
+    def __init__(self, hidden_size, keep_prob, layers=3):
         """
         Inputs:
           hidden_size: int. Hidden size of the RNN
@@ -47,7 +47,7 @@ class RNNEncoder(object):
         self.keep_prob = keep_prob
         self.layers = layers
         def lstm_cell():
-            return tf.contrib.rnn.LayerNormBasicLSTMCell(self.hidden_size, dropout_keep_prob=self.keep_prob)
+            return DropoutWrapper(rnn_cell.BasicLSTMCell(self.hidden_size), input_keep_prob=self.keep_prob)
         self.rnn_cell_fw = rnn_cell.MultiRNNCell([lstm_cell() for _ in xrange(self.layers)])
         self.rnn_cell_bw = rnn_cell.MultiRNNCell([lstm_cell() for _ in xrange(self.layers)])
 
