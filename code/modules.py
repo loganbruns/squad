@@ -37,7 +37,7 @@ class RNNEncoder(object):
     This code uses a bidirectional LSTM, but you could experiment with other types of RNN.
     """
 
-    def __init__(self, hidden_size, keep_prob, layers=3):
+    def __init__(self, hidden_size, keep_prob, layers=2):
         """
         Inputs:
           hidden_size: int. Hidden size of the RNN
