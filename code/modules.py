@@ -343,7 +343,7 @@ class BiDafAttn(object):
     """Module for BiDAF attention.
     """
 
-    def __init__(self, keep_prob, qn_vec_size, context_vec_size):
+    def __init__(self, keep_prob, qn_vec_size, context_vec_size, name='default'):
         """
         Inputs:
           keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
@@ -353,6 +353,7 @@ class BiDafAttn(object):
         self.keep_prob = keep_prob
         self.qn_vec_size = qn_vec_size
         self.context_vec_size = context_vec_size
+        self.name = name
 
     def build_graph(self, qns, qns_mask, contexts, contexts_mask):
         """
@@ -369,7 +370,7 @@ class BiDafAttn(object):
           output: Tensor shape (batch_size, num_qns, 8 * hidden_size).
             This is the attention output
         """
-        with vs.variable_scope("BiDafAttn"):
+        with vs.variable_scope("BiDafAttn-{}".format(self.name)):
 
             # Calculate similarity
             num_contexts = contexts.get_shape().as_list()[1]
@@ -407,3 +408,71 @@ class BiDafAttn(object):
             b = tf.concat([contexts, a, contexts * a, contexts * c_prime], axis=2) # shape (batch_size, num_contexts, context_vec_size*8)
 
             return b
+
+
+class BiDafMultiHeadedAttn(object):
+    """Module for multiheaded attention.
+
+    Note: in this module we use the terminology of "keys" and "values" (see lectures).
+    In the terminology of "X attends to Y", "keys attend to values".
+
+    In the baseline model, the keys are the context hidden states
+    and the values are the question hidden states.
+
+    We choose to use general terminology of keys and values in this module
+    (rather than context and question) to avoid confusion if you reuse this
+    module with other inputs.
+    """
+
+    def __init__(self, keep_prob, qn_vec_size, context_vec_size, num_heads=8):
+        """
+        Inputs:
+          keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
+          qn_vec_size: size of the qn vectors. int
+          context_vec_size: size of the context vectors. int
+        """
+        self.keep_prob = keep_prob
+        self.qn_vec_size = qn_vec_size
+        self.context_vec_size = context_vec_size
+        self.num_heads = num_heads
+        self.scaled_attn = [BiDafAttn(keep_prob, qn_vec_size / num_heads, context_vec_size / num_heads, str(i)) for i in range(num_heads)]
+
+    def build_graph(self, qns, qns_mask, contexts, contexts_mask):
+        """
+        qns attend to contexts.
+        For each qn, return an attention distribution and an attention output vector.
+
+        Inputs:
+          contexts: Tensor shape (batch_size, num_contexts, context_vec_size).
+          contexts_mask: Tensor shape (batch_size, num_contexts).
+            1s where there's real input, 0s where there's padding
+          qns: Tensor shape (batch_size, num_qns, context_vec_size)
+
+        Outputs:
+          attn_dist: Tensor shape (batch_size, num_qns, num_contexts).
+            For each qn, the distribution should sum to 1,
+            and should be 0 in the context locations that correspond to padding.
+          output: Tensor shape (batch_size, num_qns, hidden_size).
+            This is the attention output; the weighted sum of the contexts
+            (using the attention distribution as weights).
+        """
+        with vs.variable_scope("MultiHeadedAttn"):
+
+            W_qns = tf.get_variable('W_qns', shape=(self.context_vec_size, self.context_vec_size), initializer=tf.contrib.layers.xavier_initializer())
+            shape = qns.get_shape().as_list() + [self.num_heads]
+            shape[2] /= self.num_heads
+            shape[0] = -1
+            scaled_qns = tf.unstack(tf.reshape(tf.tensordot(qns, W_qns, 1), shape), axis=3)
+            W_contexts = tf.get_variable('W_contexts', shape=(self.context_vec_size, self.context_vec_size), initializer=tf.contrib.layers.xavier_initializer())
+            shape = contexts.get_shape().as_list() + [self.num_heads]
+            shape[2] /= self.num_heads
+            shape[0] = -1
+            scaled_contexts = tf.unstack(tf.reshape(tf.tensordot(contexts, W_contexts, 1), shape), axis=3)
+
+            # shape (batch_size, num_qns, hidden_size, num_heads)
+            outputs = tf.stack([self.scaled_attn[i].build_graph(scaled_qns[i], qns_mask, scaled_contexts[i], contexts_mask) for i in range(self.num_heads)], axis=3)
+
+            # shape (batch_size, num_qns, num_heads * hidden_size)
+            shape = outputs.get_shape().as_list()[0:2] + [self.num_heads*outputs.get_shape().as_list()[2]]
+            shape[0] = -1
+            return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])

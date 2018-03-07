@@ -30,7 +30,7 @@ from tensorflow.python.ops import embedding_ops
 from evaluate import exact_match_score, f1_score
 from data_batcher import get_batch_generator
 from pretty_print import print_example
-from modules import RNNEncoder, SimpleSoftmaxLayer, BasicAttn, MultiHeadedAttn, BiDafAttn
+from modules import RNNEncoder, SimpleSoftmaxLayer, BasicAttn, MultiHeadedAttn, BiDafAttn, BiDafMultiHeadedAttn
 
 logging.basicConfig(level=logging.INFO)
 
@@ -142,7 +142,8 @@ class QAModel(object):
         # attn_layer_2 = BasicAttn(self.keep_prob, self.FLAGS.embedding_size, self.FLAGS.embedding_size)
         # scaled_qn_hiddens = tf.contrib.layers.fully_connected(question_hiddens, num_outputs=self.FLAGS.embedding_size)
         # _, attn_output_2 = attn_layer_2.build_graph(scaled_qn_hiddens, self.qn_mask, self.context_embs) # attn_output is shape (batch_size, context_len, embedding_size)
-        attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
+        #attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
+        attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
  
         # Concat attn_output to context_hiddens to get blended_reps
