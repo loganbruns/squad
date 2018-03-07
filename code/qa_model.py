@@ -152,7 +152,10 @@ class QAModel(object):
         # Apply fully connected layer to each blended representation
         # Note, blended_reps_final corresponds to b' in the handout
         # Note, tf.contrib.layers.fully_connected applies a ReLU non-linarity here by default
-        blended_reps_final = tf.contrib.layers.fully_connected(blended_reps, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
+        # blended_reps_final = tf.contrib.layers.fully_connected(blended_reps, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
+        blended_reps_1 = tf.contrib.layers.fully_connected(blended_reps, num_outputs=4*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 4*hidden_size)
+        blended_reps_2 = tf.contrib.layers.fully_connected(blended_reps_1, num_outputs=2*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 2*hidden_size)
+        blended_reps_final = tf.contrib.layers.fully_connected(blended_reps_2, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
 
         # Use softmax layer to compute probability distribution for start location
         # Note this produces self.logits_start and self.probdist_start, both of which have shape (batch_size, context_len)
