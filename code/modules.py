@@ -475,4 +475,5 @@ class BiDafMultiHeadedAttn(object):
             # shape (batch_size, num_qns, num_heads * hidden_size)
             shape = outputs.get_shape().as_list()[0:2] + [self.num_heads*outputs.get_shape().as_list()[2]]
             shape[0] = -1
-            return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])
+            return tf.reshape(outputs, shape)
+            # return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])
