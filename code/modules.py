@@ -407,7 +407,10 @@ class BiDafAttn(object):
 
             b = tf.concat([contexts, a, contexts * a, contexts * c_prime], axis=2) # shape (batch_size, num_contexts, context_vec_size*8)
 
-            return b
+            encoder = RNNEncoder(self.context_vec_size / 2, self.keep_prob)
+            b_hiddens = encoder.build_graph(b, contexts_mask) # (batch_size, num_contexts, context_vec_size)
+
+            return b_hiddens
 
 
 class BiDafMultiHeadedAttn(object):
