@@ -405,12 +405,7 @@ class BiDafAttn(object):
             # Use Q2C attention distribution to take weighted sum of contexts
             c_prime = tf.matmul(contexts_attn_dist, contexts) # shape (batch_size, context_vec_size)
 
-            b = tf.concat([contexts, a, contexts * a, contexts * c_prime], axis=2) # shape (batch_size, num_contexts, context_vec_size*8)
-
-            encoder = RNNEncoder(self.context_vec_size / 2, self.keep_prob)
-            b_hiddens = encoder.build_graph(b, contexts_mask) # (batch_size, num_contexts, context_vec_size)
-
-            return b_hiddens
+            return tf.concat([contexts, a, contexts * a, contexts * c_prime], axis=2) # shape (batch_size, num_contexts, context_vec_size*8)
 
 
 class BiDafMultiHeadedAttn(object):
