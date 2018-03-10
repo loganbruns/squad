@@ -1,4 +1,4 @@
-EXPERIMENT=v6
+EXPERIMENT=v6_3
 DESCRIPTION="$(EXPERIMENT): attention iteration"
 WORKSPACE=main::cs224n-lbruns
 
@@ -58,6 +58,9 @@ show-examples:
 
 train:
 	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train
+
+train-cpu:
+	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train --gpu=-1
 
 tensorboard:
 	(cd experiments; nohup tensorboard --logdir=. --port=5678 &)
