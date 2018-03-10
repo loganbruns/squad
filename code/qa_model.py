@@ -160,7 +160,7 @@ class QAModel(object):
         # Concat attn_output to context_hiddens to get blended_reps
         # g_start = tf.concat([attn_output, m_start], axis=2) # (batch_size, context_len, hidden_size*4)
         # g_end = tf.concat([attn_output, m_end], axis=2) # (batch_size, context_len, hidden_size*4)
-        g = tf.concat([attn_output, m], axis=2) # (batch_size, context_len, hidden_size*4)
+        g = tf.concat([context_hiddens, attn_output, m], axis=2) # (batch_size, context_len, hidden_size*6)
         # blended_reps = attn_output
 
         # Apply fully connected layer to each blended representation
