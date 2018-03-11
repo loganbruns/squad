@@ -161,7 +161,7 @@ class QAModel(object):
         # g_start = tf.concat([attn_output, m_start], axis=2) # (batch_size, context_len, hidden_size*4)
         # g_end = tf.concat([attn_output, m_end], axis=2) # (batch_size, context_len, hidden_size*4)
         g = tf.concat([context_hiddens, attn_output, m], axis=2) # (batch_size, context_len, hidden_size*6)
-        # blended_reps = attn_output
+        blended_reps = g
 
         # Apply fully connected layer to each blended representation
         # Note, blended_reps_final corresponds to b' in the handout
@@ -169,7 +169,10 @@ class QAModel(object):
         # blended_reps_final = tf.contrib.layers.fully_connected(blended_reps, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
         # blended_reps_start = tf.contrib.layers.fully_connected(g_start, num_outputs=self.FLAGS.hidden_size) # blended_reps_start is shape (batch_size, context_len, hidden_size)
         # blended_reps_end = tf.contrib.layers.fully_connected(g_end, num_outputs=self.FLAGS.hidden_size) # blended_reps_end is shape (batch_size, context_len, hidden_size)
-        blended_reps_final = tf.contrib.layers.fully_connected(g, num_outputs=self.FLAGS.hidden_size) # blended_reps_start is shape (batch_size, context_len, hidden_size)
+        # blended_reps_final = tf.contrib.layers.fully_connected(g, num_outputs=self.FLAGS.hidden_size) # blended_reps_start is shape (batch_size, context_len, hidden_size)
+        blended_reps_1 = tf.contrib.layers.fully_connected(blended_reps, num_outputs=4*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 4*hidden_size)
+        blended_reps_2 = tf.contrib.layers.fully_connected(blended_reps_1, num_outputs=2*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 2*hidden_size)
+        blended_reps_final = tf.contrib.layers.fully_connected(blended_reps_2, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
 
         # Use softmax layer to compute probability distribution for start location
         # Note this produces self.logits_start and self.probdist_start, both of which have shape (batch_size, context_len)
@@ -323,8 +326,10 @@ class QAModel(object):
 
         # Take argmax to get start_pos and end_post, both shape (batch_size)
         start_pos = np.argmax(start_dist, axis=1)
-        end_pos = np.argmax(end_dist, axis=1)
-
+        # end_pos = np.argmax(end_dist, axis=1)
+        start_mask = np.reshape([1.0 if (j >= pos) and ((j - pos) < 50) else 0.0 for pos in start_pos for j in range(end_dist.shape[1])], end_dist.shape)
+        end_pos = np.argmax(end_dist * start_mask, axis=1)
+        
         return start_pos, end_pos
 
 
