@@ -236,7 +236,172 @@ Bi-directional multiheaded attention.
 
 Note: below is on branch relative to v1
 
+```
+INFO:root:Epoch 10, Iter 8500, dev loss: 4.266326
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 7.65 seconds
+INFO:root:Epoch 10, Iter 8500, Train F1 score: 0.643647, Train EM score: 0.523000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 48.73 seconds
+INFO:root:Epoch 10, Iter 8500, Dev F1 score: 0.464632, Dev EM score: 0.347320
+```
+
+Sanity {"f1": 45.857403383413896, "exact_match": 39.25925925925926}
+Dev    {"f1": 50.24618423841851, "exact_match": 40.74739829706717}
+
+## v5 BiDAF attention with two layers
+Bi-directional multiheaded attention with two layers
+
+```
+INFO:root:Epoch 12, Iter 10000, dev loss: 4.248739
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 10.70 seconds
+INFO:root:Epoch 12, Iter 10000, Train F1 score: 0.709331, Train EM score: 0.595000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 80.51 seconds
+INFO:root:Epoch 12, Iter 10000, Dev F1 score: 0.485221, Dev EM score: 0.366086
+```
+
+Sanity {"f1": 45.74603664669224, "exact_match": 38.641975308641975}
+Dev    {"f1": 52.43855839392188, "exact_match": 42.904446546830656}
+#34 on dev leaderboard
+
+## v5_1 BiDAF attention with two layers and two more fully connected output layers
+BiDAF attention with two layers and two more fully connected output layers
+
+```
+INFO:root:Epoch 12, Iter 10000, dev loss: 4.334206
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 11.10 seconds
+INFO:root:Epoch 12, Iter 10000, Train F1 score: 0.752329, Train EM score: 0.656000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 86.02 seconds
+INFO:root:Epoch 12, Iter 10000, Dev F1 score: 0.484270, Dev EM score: 0.365701
+```
+
+Sanity {"f1": 47.61124700453312, "exact_match": 40.864197530864196}
+Dev    {"f1": 52.53578071744936, "exact_match": 43.0558183538316}
+
+## v5_2 Retrain embeddings
+
+Crazy overfitting
+
+```
+INFO:root:Epoch 6, Iter 4500, dev loss: 4.646455
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 10.93 seconds
+INFO:root:Epoch 6, Iter 4500, Train F1 score: 0.774622, Train EM score: 0.668000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 82.49 seconds
+INFO:root:Epoch 6, Iter 4500, Dev F1 score: 0.448740, Dev EM score: 0.336253
+```
+
+Sanity {"f1": 42.4202848180741, "exact_match": 34.44444444444444}
+Dev    {"f1": 48.58739310895522, "exact_match": 39.25260170293283}
+
+## v5_3 hidden state of 300 dimensions
+
+```
+INFO:root:Epoch 10, Iter 8000, dev loss: 4.491363
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 11.83 seconds
+INFO:root:Epoch 10, Iter 8000, Train F1 score: 0.830607, Train EM score: 0.746000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 91.22 seconds
+INFO:root:Epoch 10, Iter 8000, Dev F1 score: 0.485656, Dev EM score: 0.368588
+```
+
+Sanity {"f1": 47.55317742191654, "exact_match": 40.98765432098765}
+Dev    {"f1": 52.619511182947925, "exact_match": 43.0558183538316}
+
+
+## v6 Multi-headed BiDAF attention
+
+```
+INFO:root:Epoch 13, Iter 11000, dev loss: 4.530684
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.05 seconds
+INFO:root:Epoch 13, Iter 11000, Train F1 score: 0.676184, Train EM score: 0.566000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 126.78 seconds
+INFO:root:Epoch 13, Iter 11000, Dev F1 score: 0.457048, Dev EM score: 0.342700
+```
+
+Sanity {"f1": 44.64501791033862, "exact_match": 38.51851851851852}
+Dev    {"f1": 49.46892884195423, "exact_match": 40.21759697256386}
+
+## v6_1 Multi-headed BiDAF attention
+Removed fully connected output from attention layer
+
+Stopped early since it looked exactly the same as v6
+
+## v6_2 BiDAF modeling layer
+Added bi-LSTM after BiDAF attention
+
+```
+INFO:root:Epoch 13, Iter 11000, dev loss: 3.247179
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 18.84 seconds
+INFO:root:Epoch 13, Iter 11000, Train F1 score: 0.859833, Train EM score: 0.746000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 160.10 seconds
+INFO:root:Epoch 13, Iter 11000, Dev F1 score: 0.669573, Dev EM score: 0.527091
+```
+
+Sanity {"f1": 64.2309441309658, "exact_match": 58.39506172839506}
+Dev    {"f1": 72.21678027292796, "exact_match": 62.42194891201514}
+#20 on dev leaderboard
+
+## v6_3 BiDAF addl bi-LSTM for end output
+Add concat for states and extra separate bi-LSTM for end output
+
+```
+INFO:root:Epoch 1, Iter 6500, dev loss: 3.038269
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 34.46 seconds
+INFO:root:Epoch 1, Iter 6500, Train F1 score: 0.770729, Train EM score: 0.627000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 312.84 seconds
+INFO:root:Epoch 1, Iter 6500, Dev F1 score: 0.650111, Dev EM score: 0.503801
+```
+
+Sanity {"f1": 60.849127264978705, "exact_match": 53.58024691358025}
+Dev    {"f1": 70.15586507668179, "exact_match": 59.517502365184484}
+
+
+## v6_4 Multi-headed BiDAF attention with modeling layer
+Try multi-headed with BiDAF that has modeling layer per head
+
+## v6_5 BiDAF only single bi-LSTM for end output and concat
+
+Aborted since it looked worse than v6_2
+
+IMPORTANT: unlike bidaf including context hiddens with others seems important
+
+## v6_6 BiDAF single bi-LSTM for end output with multi-headed and context hidden
+
+## v6_7 BiDAF only single bi-LSTM for end output and add context hidden
+
+```
+INFO:root:Epoch 12, Iter 9500, dev loss: 3.099524
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 18.40 seconds
+INFO:root:Epoch 12, Iter 9500, Train F1 score: 0.824909, Train EM score: 0.703000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 158.76 seconds
+INFO:root:Epoch 12, Iter 9500, Dev F1 score: 0.664953, Dev EM score: 0.519199
+```
+
+Sanity {"f1": 63.60864993886001, "exact_match": 55.67901234567901}
+Dev    {"f1": 72.17569729920082, "exact_match": 61.91106906338695}
+
 ## Backlog
+
+# adadelta optimizer
+
+# n-grams
+
+# positional features
 
 # similarity head from bidaf for multiheaded
 

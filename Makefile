@@ -1,5 +1,5 @@
-EXPERIMENT=v6_5
-DESCRIPTION="$(EXPERIMENT): attention iteration"
+EXPERIMENT=v7
+DESCRIPTION="$(EXPERIMENT): architecture iteration"
 WORKSPACE=main::cs224n-lbruns
 
 all:
