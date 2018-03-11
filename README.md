@@ -372,6 +372,18 @@ Dev    {"f1": 70.15586507668179, "exact_match": 59.517502365184484}
 ## v6_4 Multi-headed BiDAF attention with modeling layer
 Try multi-headed with BiDAF that has modeling layer per head
 
+TOO SLOW!!!
+
+```
+INFO:root:Epoch 4, Iter 4500, dev loss: 3.435196
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 87.11 seconds
+INFO:root:Epoch 4, Iter 4500, Train F1 score: 0.642663, Train EM score: 0.496000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 833.91 seconds
+INFO:root:Epoch 4, Iter 4500, Dev F1 score: 0.585153, Dev EM score: 0.436147
+```
+
 ## v6_5 BiDAF only single bi-LSTM for end output and concat
 
 Aborted since it looked worse than v6_2
@@ -379,6 +391,34 @@ Aborted since it looked worse than v6_2
 IMPORTANT: unlike bidaf including context hiddens with others seems important
 
 ## v6_6 BiDAF single bi-LSTM for end output with multi-headed and context hidden
+
+```
+INFO:root:Epoch 10, Iter 11000, dev loss: 2.989576
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 30.13 seconds
+INFO:root:Epoch 10, Iter 11000, Train F1 score: 0.798626, Train EM score: 0.676000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 275.35 seconds
+INFO:root:Epoch 10, Iter 11000, Dev F1 score: 0.653341, Dev EM score: 0.510442
+```
+
+Sanity {"f1": 63.14716189455512, "exact_match": 56.17283950617284}
+Dev    {"f1": 70.46553459499877, "exact_match": 60.24597918637654}
+
+continuing with  --learning_rate=0.0005 --max_gradient_norm=3.5
+
+```
+INFO:root:Epoch 1, Iter 13500, dev loss: 3.000100
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 29.79 seconds
+INFO:root:Epoch 1, Iter 13500, Train F1 score: 0.855376, Train EM score: 0.729000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 272.91 seconds
+INFO:root:Epoch 1, Iter 13500, Dev F1 score: 0.668812, Dev EM score: 0.523434
+```
+
+Sanity {"f1": 63.99229259782295, "exact_match": 56.41975308641975}
+Dev    {"f1": 71.92831101447436, "exact_match": 61.485335856196784}
 
 ## v6_7 BiDAF only single bi-LSTM for end output and add context hidden
 
@@ -395,7 +435,61 @@ INFO:root:Epoch 12, Iter 9500, Dev F1 score: 0.664953, Dev EM score: 0.519199
 Sanity {"f1": 63.60864993886001, "exact_match": 55.67901234567901}
 Dev    {"f1": 72.17569729920082, "exact_match": 61.91106906338695}
 
+# v7 merge v6_7 and add two more fully connected output layers and update test span prediction
+
+```
+INFO:root:Epoch 9, Iter 7000, dev loss: 3.072619
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 19.11 seconds
+INFO:root:Epoch 9, Iter 7000, Train F1 score: 0.796002, Train EM score: 0.668000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 163.21 seconds
+INFO:root:Epoch 9, Iter 7000, Dev F1 score: 0.660192, Dev EM score: 0.513040
+```
+
+Sanity {"f1": 63.84285273800261, "exact_match": 58.02469135802469}
+Dev    {"f1": 71.46719122614957, "exact_match": 60.946073793755914}
+
+Continuing with --learning_rate=0.0005 --max_gradient_norm=3.5
+
+```
+INFO:root:Epoch 2, Iter 9500, dev loss: 3.201796
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 19.42 seconds
+INFO:root:Epoch 2, Iter 9500, Train F1 score: 0.880579, Train EM score: 0.780000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 161.50 seconds
+INFO:root:Epoch 2, Iter 9500, Dev F1 score: 0.669300, Dev EM score: 0.523434
+```
+
+Sanity {"f1": 66.5627248127454, "exact_match": 60.24691358024691}
+Dev    {"f1": 72.22309247029055, "exact_match": 62.06244087038789}
+
+With test span prediction changes
+
+Sanity {"f1": 67.76893773453804, "exact_match": 61.358024691358025}
+Dev    {"f1": 73.99727522796228, "exact_match": 63.33017975402081}
+
+# v7_1 remove attn_output from final concat and reduce final hidden layers by one
+
+# v8 separate bi-LSTM for end output
+Switched part way to --learning_rate=0.0005 --max_gradient_norm=3.5
+
+```
+INFO:root:Epoch 2, Iter 6000, dev loss: 3.101754
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 37.47 seconds
+INFO:root:Epoch 2, Iter 6000, Train F1 score: 0.732899, Train EM score: 0.598000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10390 examples in dev set took 364.49 seconds
+INFO:root:Epoch 2, Iter 6000, Dev F1 score: 0.635522, Dev EM score: 0.488354
+```
+
+Continuing with  --learning_rate=0.0001 --max_gradient_norm=2.5
+
 ## Backlog
+
+# adjust dropout
 
 # adadelta optimizer
 
