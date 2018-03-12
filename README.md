@@ -472,6 +472,22 @@ Dev    {"f1": 73.99727522796228, "exact_match": 63.33017975402081}
 
 # v7_1 remove attn_output from final concat and reduce final hidden layers by one
 
+# v7_2 reduce context_len to 400 from 600
+*Faster*
+
+```
+INFO:root:Epoch 12, Iter 10000, dev loss: 3.227865
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 13.58 seconds
+INFO:root:Epoch 12, Iter 10000, Train F1 score: 0.861214, Train EM score: 0.744000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 114.51 seconds
+INFO:root:Epoch 12, Iter 10000, Dev F1 score: 0.674911, Dev EM score: 0.520450
+```
+
+Sanity {"f1": 66.31548093541456, "exact_match": 59.01234567901235}
+Dev    {"f1": 72.96486753246917, "exact_match": 61.97729422894986}
+
 # v8 separate bi-LSTM for end output
 Switched part way to --learning_rate=0.0005 --max_gradient_norm=3.5
 
@@ -486,6 +502,31 @@ INFO:root:Epoch 2, Iter 6000, Dev F1 score: 0.635522, Dev EM score: 0.488354
 ```
 
 Continuing with  --learning_rate=0.0001 --max_gradient_norm=2.5
+
+```
+INFO:root:Epoch 2, Iter 7500, dev loss: 2.989900
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 37.06 seconds
+INFO:root:Epoch 2, Iter 7500, Train F1 score: 0.764038, Train EM score: 0.622000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10390 examples in dev set took 364.48 seconds
+INFO:root:Epoch 2, Iter 7500, Dev F1 score: 0.649537, Dev EM score: 0.501540
+```
+
+Continuing with  --learning_rate=0.00005 --max_gradient_norm=2.25
+
+```
+INFO:root:Epoch 4, Iter 13000, dev loss: 2.981783
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 38.49 seconds
+INFO:root:Epoch 4, Iter 13000, Train F1 score: 0.763715, Train EM score: 0.625000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10390 examples in dev set took 371.89 seconds
+INFO:root:Epoch 4, Iter 13000, Dev F1 score: 0.654272, Dev EM score: 0.508181
+```
+
+Sanity {"f1": 62.62193004114403, "exact_match": 55.67901234567901}
+Dev    {"f1": 70.80925181075419, "exact_match": 60.55818353831599}
 
 ## Backlog
 

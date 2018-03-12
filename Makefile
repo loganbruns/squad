@@ -65,5 +65,8 @@ train-cpu:
 train-slow:
 	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train --learning_rate=0.0005 --max_gradient_norm=3.5
 
+train-very-slow:
+	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train --learning_rate=0.0001 --max_gradient_norm=2.5
+
 tensorboard:
 	(cd experiments; nohup tensorboard --logdir=. --port=5678 &)
