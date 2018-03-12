@@ -1,4 +1,4 @@
-EXPERIMENT=v7
+EXPERIMENT=v8
 DESCRIPTION="$(EXPERIMENT): architecture iteration"
 WORKSPACE=main::cs224n-lbruns
 
@@ -58,6 +58,9 @@ show-examples:
 
 train:
 	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train
+
+train-slow:
+	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train --learning_rate=0.0005 --max_gradient_norm=3.5
 
 train-cpu:
 	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train --gpu=-1
