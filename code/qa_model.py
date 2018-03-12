@@ -160,7 +160,7 @@ class QAModel(object):
         # Concat attn_output to context_hiddens to get blended_reps
         # g_start = tf.concat([attn_output, m_start], axis=2) # (batch_size, context_len, hidden_size*4)
         # g_end = tf.concat([attn_output, m_end], axis=2) # (batch_size, context_len, hidden_size*4)
-        g = tf.concat([context_hiddens, attn_output, m], axis=2) # (batch_size, context_len, hidden_size*6)
+        g = tf.concat([context_hiddens, m], axis=2) # (batch_size, context_len, hidden_size*4)
         blended_reps = g
 
         # Apply fully connected layer to each blended representation
@@ -170,9 +170,8 @@ class QAModel(object):
         # blended_reps_start = tf.contrib.layers.fully_connected(g_start, num_outputs=self.FLAGS.hidden_size) # blended_reps_start is shape (batch_size, context_len, hidden_size)
         # blended_reps_end = tf.contrib.layers.fully_connected(g_end, num_outputs=self.FLAGS.hidden_size) # blended_reps_end is shape (batch_size, context_len, hidden_size)
         # blended_reps_final = tf.contrib.layers.fully_connected(g, num_outputs=self.FLAGS.hidden_size) # blended_reps_start is shape (batch_size, context_len, hidden_size)
-        blended_reps_1 = tf.contrib.layers.fully_connected(blended_reps, num_outputs=4*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 4*hidden_size)
-        blended_reps_2 = tf.contrib.layers.fully_connected(blended_reps_1, num_outputs=2*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 2*hidden_size)
-        blended_reps_final = tf.contrib.layers.fully_connected(blended_reps_2, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
+        blended_reps_1 = tf.contrib.layers.fully_connected(blended_reps, num_outputs=2*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 4*hidden_size)
+        blended_reps_final = tf.contrib.layers.fully_connected(blended_reps_1, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
 
         # Use softmax layer to compute probability distribution for start location
         # Note this produces self.logits_start and self.probdist_start, both of which have shape (batch_size, context_len)
