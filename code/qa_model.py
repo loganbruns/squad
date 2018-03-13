@@ -137,22 +137,11 @@ class QAModel(object):
         # Use context hidden states to attend to question hidden states
         # attn_layer = BasicAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         # _, attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens) # attn_output is shape (batch_size, context_len, hidden_size*2)
-        # attn_layer = MultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2, self.FLAGS.context_len)
-        # attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens) # attn_output is shape (batch_size, context_len, hidden_size*2)
-        # attn_layer_2 = BasicAttn(self.keep_prob, self.FLAGS.embedding_size, self.FLAGS.embedding_size)
-        # scaled_qn_hiddens = tf.contrib.layers.fully_connected(question_hiddens, num_outputs=self.FLAGS.embedding_size)
-        # _, attn_output_2 = attn_layer_2.build_graph(scaled_qn_hiddens, self.qn_mask, self.context_embs) # attn_output is shape (batch_size, context_len, embedding_size)
         attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         # attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
 
         # Model layer
-        # with vs.variable_scope('ModelLayer-StartPos'):
-        #     encoder_start = RNNEncoder(self.FLAGS.hidden_size, self.keep_prob)
-        #     m_start = encoder_start.build_graph(attn_output, self.context_mask) # (batch_size, num_contexts, 2*hidden_size)
-        # with vs.variable_scope('ModelLayer-EndPos'):
-        #     encoder_end = RNNEncoder(self.FLAGS.hidden_size, self.keep_prob)
-        #     m_end = encoder_end.build_graph(m_start, self.context_mask) # (batch_size, num_contexts, 2*hidden_size)
         with vs.variable_scope('ModelLayer'):
             encoder_model_layer = RNNEncoder(self.FLAGS.hidden_size, self.keep_prob)
             m = encoder_model_layer.build_graph(attn_output, self.context_mask) # (batch_size, num_contexts, 2*hidden_size)
@@ -166,10 +155,6 @@ class QAModel(object):
         # Apply fully connected layer to each blended representation
         # Note, blended_reps_final corresponds to b' in the handout
         # Note, tf.contrib.layers.fully_connected applies a ReLU non-linarity here by default
-        # blended_reps_final = tf.contrib.layers.fully_connected(blended_reps, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
-        # blended_reps_start = tf.contrib.layers.fully_connected(g_start, num_outputs=self.FLAGS.hidden_size) # blended_reps_start is shape (batch_size, context_len, hidden_size)
-        # blended_reps_end = tf.contrib.layers.fully_connected(g_end, num_outputs=self.FLAGS.hidden_size) # blended_reps_end is shape (batch_size, context_len, hidden_size)
-        # blended_reps_final = tf.contrib.layers.fully_connected(g, num_outputs=self.FLAGS.hidden_size) # blended_reps_start is shape (batch_size, context_len, hidden_size)
         blended_reps_1 = tf.contrib.layers.fully_connected(blended_reps, num_outputs=2*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 4*hidden_size)
         blended_reps_final = tf.contrib.layers.fully_connected(blended_reps_1, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
 
