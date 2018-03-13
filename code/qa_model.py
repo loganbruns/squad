@@ -326,7 +326,7 @@ class QAModel(object):
         # Take argmax to get start_pos and end_post, both shape (batch_size)
         start_pos = np.argmax(start_dist, axis=1)
         # end_pos = np.argmax(end_dist, axis=1)
-        start_mask = np.reshape([1.0 if (j >= pos) and ((j - pos) < 50) else 0.0 for pos in start_pos for j in range(end_dist.shape[1])], end_dist.shape)
+        start_mask = np.reshape([1.0 if (j >= pos) and ((j - pos) <= 15) else 0.0 for pos in start_pos for j in range(end_dist.shape[1])], end_dist.shape)
         end_pos = np.argmax(end_dist * start_mask, axis=1)
         
         return start_pos, end_pos
