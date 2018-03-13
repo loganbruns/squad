@@ -475,3 +475,58 @@ class BiDafMultiHeadedAttn(object):
             shape[0] = -1
             return tf.reshape(outputs, shape)
             # return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])
+
+
+class SelfAttn(object):
+    """Module for self attention.
+    """
+
+    def __init__(self, keep_prob, context_vec_size):
+        """
+        Inputs:
+          keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
+          context_vec_size: size of the context vectors. int
+        """
+        self.keep_prob = keep_prob
+        self.context_vec_size = context_vec_size
+
+    def build_graph(self, contexts, contexts_mask):
+        """
+
+        Inputs:
+          contexts: Tensor shape (batch_size, num_contexts, context_vec_size).
+          contexts_mask: Tensor shape (batch_size, num_contexts).
+            1s where there's real input, 0s where there's padding
+
+        Outputs:
+          output: Tensor shape (batch_size, num_contexts, context_vec_size).
+            This is the attention output
+        """
+        with vs.variable_scope("SelfAttn"):
+
+            # Calculate similarity
+            num_contexts = contexts.get_shape().as_list()[1]
+            W_1 = tf.get_variable('W_1', shape=(self.context_vec_size, num_contexts), initializer=tf.contrib.layers.xavier_initializer())
+            W_2 = tf.get_variable('W_2', shape=(self.context_vec_size, num_contexts), initializer=tf.contrib.layers.xavier_initializer())
+            V = tf.get_variable('V', shape=(num_contexts, 1), initializer=tf.contrib.layers.xavier_initializer())
+            
+            E = []
+            wi = tf.tensordot(contexts, W_2, 1)
+            wi.set_shape(contexts.get_shape())
+            wj = tf.tensordot(contexts, W_2, 1)
+            wj.set_shape(contexts.get_shape())
+            for j in xrange(num_contexts):
+                w = tf.nn.tanh(wi + tf.expand_dims(wj[:,j,:], 2))
+                e = tf.tensordot(w, V, 1)
+                e.set_shape(wi.get_shape()[0:2])
+                E += [e]
+            E = tf.reshape(tf.stack(E, axis=2), shape=(-1, num_contexts, num_contexts)) # shape (batch_size, num_contexts, num_contexts)
+            
+            # Calculate C2C attention distribution
+            attn_logits_mask = tf.expand_dims(contexts_mask, 1) # shape (batch_size, 1, num_contexts)
+            _, attn_dist = masked_softmax(E, attn_logits_mask, 2) # shape (batch_size, num_contexts, num_contexts). take softmax over contexts
+
+            # Use C2C attention distribution to take weighted sum of contexts
+            a = tf.matmul(attn_dist, contexts) # shape (batch_size, num_contexts, contexts_vec_size)
+
+            return a
