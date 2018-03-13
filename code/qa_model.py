@@ -30,7 +30,7 @@ from tensorflow.python.ops import embedding_ops
 from evaluate import exact_match_score, f1_score
 from data_batcher import get_batch_generator
 from pretty_print import print_example
-from modules import RNNEncoder, SimpleSoftmaxLayer, BasicAttn, MultiHeadedAttn, BiDafAttn, BiDafMultiHeadedAttn
+from modules import RNNEncoder, SimpleSoftmaxLayer, BasicAttn, MultiHeadedAttn, BiDafAttn, SelfAttn, BiDafMultiHeadedAttn
 
 logging.basicConfig(level=logging.INFO)
 
@@ -140,11 +140,15 @@ class QAModel(object):
         attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         # attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
+        small_attn_output = tf.contrib.layers.fully_connected(attn_output, num_outputs=2*self.FLAGS.hidden_size) # small_attn_output is shape (batch_size, context_len, hidden_size)
+        self_attn_layer = SelfAttn(self.keep_prob, 2*self.FLAGS.hidden_size)
+        self_attn_output = self_attn_layer.build_graph(small_attn_output, self.context_mask) # self_attn_output is shape (batch_size, context_len, 2*hidden_size)
 
         # Model layer
+        blended_attn = tf.concat([attn_output, self_attn_output], axis=2) # (batch_size, context_len, hidden_size*10)
         with vs.variable_scope('ModelLayer'):
             encoder_model_layer = RNNEncoder(self.FLAGS.hidden_size, self.keep_prob)
-            m = encoder_model_layer.build_graph(attn_output, self.context_mask) # (batch_size, num_contexts, 2*hidden_size)
+            m = encoder_model_layer.build_graph(blended_attn, self.context_mask) # (batch_size, num_contexts, 2*hidden_size)
  
         # Concat attn_output to context_hiddens to get blended_reps
         # g_start = tf.concat([attn_output, m_start], axis=2) # (batch_size, context_len, hidden_size*4)
@@ -155,7 +159,7 @@ class QAModel(object):
         # Apply fully connected layer to each blended representation
         # Note, blended_reps_final corresponds to b' in the handout
         # Note, tf.contrib.layers.fully_connected applies a ReLU non-linarity here by default
-        blended_reps_1 = tf.contrib.layers.fully_connected(blended_reps, num_outputs=2*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 4*hidden_size)
+        blended_reps_1 = tf.contrib.layers.fully_connected(blended_reps, num_outputs=2*self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, 2*hidden_size)
         blended_reps_final = tf.contrib.layers.fully_connected(blended_reps_1, num_outputs=self.FLAGS.hidden_size) # blended_reps_final is shape (batch_size, context_len, hidden_size)
 
         # Use softmax layer to compute probability distribution for start location
