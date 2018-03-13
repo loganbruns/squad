@@ -472,9 +472,25 @@ Dev    {"f1": 73.99727522796228, "exact_match": 63.33017975402081}
 
 # v7_1 remove attn_output from final concat and reduce final hidden layers by one
 
+```
+INFO:root:Epoch 3, Iter 19500, dev loss: 3.300917
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 32.96 seconds
+INFO:root:Epoch 3, Iter 19500, Train F1 score: 0.912404, Train EM score: 0.806000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10390 examples in dev set took 323.23 seconds
+INFO:root:Epoch 3, Iter 19500, Dev F1 score: 0.685307, Dev EM score: 0.534264
+```
+
+Sanity {"f1": 66.14765865732052, "exact_match": 58.39506172839506}
+Dev    {"f1": 74.16875542104182, "exact_match": 63.87890255439925}
+
+(Span <= 15)
+
 # v7_2 reduce context_len to 400 from 600
 *Faster*
 
+(Results relative to v7 not v7_1.)
 ```
 INFO:root:Epoch 12, Iter 10000, dev loss: 3.227865
 INFO:root:Calculating F1/EM for 1000 examples in train set...
@@ -487,6 +503,30 @@ INFO:root:Epoch 12, Iter 10000, Dev F1 score: 0.674911, Dev EM score: 0.520450
 
 Sanity {"f1": 66.31548093541456, "exact_match": 59.01234567901235}
 Dev    {"f1": 72.96486753246917, "exact_match": 61.97729422894986}
+
+# v7_3 merge v7_1 and v7_2
+
+```
+INFO:root:Epoch 20, Iter 16500, dev loss: 3.642466
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 13.76 seconds
+INFO:root:Epoch 20, Iter 16500, Train F1 score: 0.945380, Train EM score: 0.876000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 109.51 seconds
+INFO:root:Epoch 20, Iter 16500, Dev F1 score: 0.674633, Dev EM score: 0.525743
+```
+
+Sanity {"f1": 68.83982837808644, "exact_match": 62.22222222222222}
+Dev    {"f1": 74.08840183449259, "exact_match": 63.822138126773886}
+#11 on dev leaderboard
+
+# v7_3a change to span <= 15
+
+Sanity {"f1": 69.05652619581767, "exact_match": 62.592592592592595}
+Dev    {"f1": 74.23802196743264, "exact_match": 64.24787133396404}
+#11 on dev leaderboard
+
+# v7_4 hidden size of 250
 
 # v8 separate bi-LSTM for end output
 Switched part way to --learning_rate=0.0005 --max_gradient_norm=3.5
@@ -528,7 +568,26 @@ INFO:root:Epoch 4, Iter 13000, Dev F1 score: 0.654272, Dev EM score: 0.508181
 Sanity {"f1": 62.62193004114403, "exact_match": 55.67901234567901}
 Dev    {"f1": 70.80925181075419, "exact_match": 60.55818353831599}
 
+# v9 multi-headed with merge of v7* and full size states for concat
+
+```
+INFO:root:Epoch 15, Iter 12500, dev loss: 3.025343
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 18.25 seconds
+INFO:root:Epoch 15, Iter 12500, Train F1 score: 0.861873, Train EM score: 0.753000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 154.67 seconds
+INFO:root:Epoch 15, Iter 12500, Dev F1 score: 0.675407, Dev EM score: 0.528438
+```
+
+Sanity {"f1": 65.17359804016536, "exact_match": 57.407407407407405}
+Dev    {"f1": 72.78536982973944, "exact_match": 62.03405865657521}
+
+Continuing with train-slow
+
 ## Backlog
+
+# train half of embeddings
 
 # adjust dropout
 
