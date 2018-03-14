@@ -511,10 +511,8 @@ class SelfAttn(object):
             V = tf.get_variable('V', shape=(num_contexts, 1), initializer=tf.contrib.layers.xavier_initializer())
             
             E = []
-            wi = tf.tensordot(contexts, W_2, 1)
-            wi.set_shape(contexts.get_shape())
-            wj = tf.tensordot(contexts, W_2, 1)
-            wj.set_shape(contexts.get_shape())
+            wi = tf.reshape(tf.tensordot(contexts, W_2, 1), shape=(-1, num_contexts, num_contexts))
+            wj = tf.reshape(tf.tensordot(contexts, W_1, 1), shape=(-1, num_contexts, num_contexts))
             for j in xrange(num_contexts):
                 w = tf.nn.tanh(wi + tf.expand_dims(wj[:,j,:], 2))
                 e = tf.tensordot(w, V, 1)
