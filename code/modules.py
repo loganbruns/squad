@@ -68,7 +68,7 @@ class RNNEncoder(object):
 
             # Note: fw_out and bw_out are the hidden states for every timestep.
             # Each is shape (batch_size, seq_len, hidden_size).
-            (fw_out, bw_out), _ = tf.nn.bidirectional_dynamic_rnn(self.rnn_cell_fw, self.rnn_cell_bw, inputs, input_lens, dtype=tf.float32)
+            (fw_out, bw_out), _ = tf.nn.bidirectional_dynamic_rnn(self.rnn_cell_fw, self.rnn_cell_bw, inputs, input_lens, swap_memory=True, dtype=tf.float32)
 
             # Concatenate the forward and backward hidden states
             out = tf.concat([fw_out, bw_out], 2)
@@ -456,17 +456,18 @@ class BiDafMultiHeadedAttn(object):
         """
         with vs.variable_scope("MultiHeadedAttn"):
 
-            W_qns = tf.get_variable('W_qns', shape=(self.context_vec_size, self.context_vec_size), initializer=tf.contrib.layers.xavier_initializer())
-            shape = qns.get_shape().as_list() + [self.num_heads]
+            W_qns = [tf.get_variable('W_qn_{}'.format(i), shape=(self.context_vec_size, self.context_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
+            shape = qns.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_qns = tf.unstack(tf.reshape(tf.tensordot(qns, W_qns, 1), shape), axis=3)
-            W_contexts = tf.get_variable('W_contexts', shape=(self.context_vec_size, self.context_vec_size), initializer=tf.contrib.layers.xavier_initializer())
-            shape = contexts.get_shape().as_list() + [self.num_heads]
+            scaled_qns = [tf.reshape(tf.tensordot(qns, W_qns[i], 1), shape) for i in xrange(self.num_heads)]
+            
+            W_contexts = [tf.get_variable('W_contexts_{}'.format(i), shape=(self.context_vec_size, self.context_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
+            shape = contexts.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_contexts = tf.unstack(tf.reshape(tf.tensordot(contexts, W_contexts, 1), shape), axis=3)
-
+            scaled_contexts = [tf.reshape(tf.tensordot(contexts, W_contexts[i], 1), shape) for i in xrange(self.num_heads)]
+            
             # shape (batch_size, num_qns, hidden_size, num_heads)
             outputs = tf.stack([self.scaled_attn[i].build_graph(scaled_qns[i], qns_mask, scaled_contexts[i], contexts_mask) for i in range(self.num_heads)], axis=3)
 
