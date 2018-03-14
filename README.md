@@ -528,6 +528,22 @@ Dev    {"f1": 74.23802196743264, "exact_match": 64.24787133396404}
 
 # v7_4 hidden size of 250
 
+```
+INFO:root:Epoch 6, Iter 13000, dev loss: 3.131100
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 22.91 seconds
+INFO:root:Epoch 6, Iter 13000, Train F1 score: 0.860003, Train EM score: 0.735000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 204.20 seconds
+INFO:root:Epoch 6, Iter 13000, Dev F1 score: 0.680004, Dev EM score: 0.532673
+```
+
+Sanity {"f1": 67.9107345206716, "exact_match": 60.617283950617285}
+Dev    {"f1": 73.42958530887074, "exact_match": 63.074739829706715}
+
+# v7_5 hidden size of 300
+Killed since it was slow
+
 # v8 separate bi-LSTM for end output
 Switched part way to --learning_rate=0.0005 --max_gradient_norm=3.5
 
@@ -584,6 +600,44 @@ Sanity {"f1": 65.17359804016536, "exact_match": 57.407407407407405}
 Dev    {"f1": 72.78536982973944, "exact_match": 62.03405865657521}
 
 Continuing with train-slow
+
+```
+INFO:root:Epoch 2, Iter 16000, dev loss: 3.216027
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 18.39 seconds
+INFO:root:Epoch 2, Iter 16000, Train F1 score: 0.869798, Train EM score: 0.756000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 156.24 seconds
+INFO:root:Epoch 2, Iter 16000, Dev F1 score: 0.676911, Dev EM score: 0.532095
+```
+
+Sanity {"f1": 62.943974860844435, "exact_match": 56.41975308641975}
+Dev    {"f1": 72.83323025933947, "exact_match": 62.29895931882687}
+
+# v10 self-attention
+Self attention of bidaf attention projected to 2*hidden
+
+```
+INFO:root:Epoch 2, Iter 4500, dev loss: 5.543233
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 49.78 seconds
+INFO:root:Epoch 2, Iter 4500, Train F1 score: 0.408550, Train EM score: 0.303000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10389 examples in dev set took 509.50 seconds
+INFO:root:Epoch 2, Iter 4500, Dev F1 score: 0.352584, Dev EM score: 0.239773
+```
+
+Aborted due to slow learning
+
+# v10_1 self-attention of bidaf attention with no projection
+Removed fully connected projection layer
+
+Aborted to restart with Cudnn
+
+# v10_2 self-attention of bidaf attention with no projection
+Removed fully connected projection layer and switched to CudnnCompatible*
+
+# v11 multi-headed with separate projection matrices
 
 ## Backlog
 
