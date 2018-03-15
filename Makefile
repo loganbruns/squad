@@ -1,4 +1,4 @@
-EXPERIMENT=v10
+EXPERIMENT=v10_2
 DESCRIPTION="$(EXPERIMENT): attention iteration"
 WORKSPACE=main::cs224n-lbruns
 
