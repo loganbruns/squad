@@ -637,7 +637,93 @@ Aborted to restart with Cudnn
 # v10_2 self-attention of bidaf attention with no projection
 Removed fully connected projection layer and switched to CudnnCompatible*
 
+```
+INFO:root:Epoch 5, Iter 19000, dev loss: 3.043008
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 45.63 seconds
+INFO:root:Epoch 5, Iter 19000, Train F1 score: 0.819805, Train EM score: 0.689000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10389 examples in dev set took 469.45 seconds
+INFO:root:Epoch 5, Iter 19000, Dev F1 score: 0.668080, Dev EM score: 0.522379
+```
+
+Sanity {"f1": 64.06971901700273, "exact_match": 55.55555555555556}
+Dev    {"f1": 72.27979367413685, "exact_match": 61.79754020813623}
+
+Note: very slow due to small batch size of 25
+
 # v11 multi-headed with separate projection matrices
+
+Aborted to restart with Cudnn
+
+# v11_1 multi-headed with separate projection matrices
+
+```
+INFO:root:Epoch 7, Iter 7500, dev loss: 3.002624
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.98 seconds
+INFO:root:Epoch 7, Iter 7500, Train F1 score: 0.815278, Train EM score: 0.686000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 143.95 seconds
+INFO:root:Epoch 7, Iter 7500, Dev F1 score: 0.668733, Dev EM score: 0.524107
+```
+
+Sanity {"f1": 65.71772165330948, "exact_match": 58.641975308641975}
+Dev    {"f1": 72.46684999452987, "exact_match": 62.37464522232734}
+
+# v11_2 multi-headed with separate projection matrices and shared W per head
+Share the same weight matrix per head such qn and contexts are more easily comparable
+
+# v12 new baseline with CudnnCompatible* and swap_memory=True
+
+```
+INFO:root:Epoch 7, Iter 8500, dev loss: 3.027820
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 14.96 seconds
+INFO:root:Epoch 7, Iter 8500, Train F1 score: 0.836449, Train EM score: 0.703000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 120.45 seconds
+INFO:root:Epoch 7, Iter 8500, Dev F1 score: 0.679710, Dev EM score: 0.532480
+```
+
+Sanity {"f1": 65.93260656263881, "exact_match": 59.25925925925926}
+Dev    {"f1": 73.58635037870457, "exact_match": 63.10312204351939}
+
+# v12_1 try RNN layers = 3
+
+# v12_2 try hidden size = 250
+
+# v12_3 add layer_norm at end of rnn output
+
+# v13 add | c - a | style features to BiDaf
+
+```
+INFO:root:Epoch 14, Iter 13000, dev loss: 3.442659
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.43 seconds
+INFO:root:Epoch 14, Iter 13000, Train F1 score: 0.841963, Train EM score: 0.711000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 137.45 seconds
+INFO:root:Epoch 14, Iter 13000, Dev F1 score: 0.665741, Dev EM score: 0.518814
+```
+
+Sanity {"f1": 66.34345805682364, "exact_match": 59.75308641975309}
+Dev    {"f1": 71.91682622965291, "exact_match": 61.49479659413434}
+
+# v14 make embeddings trainable regularized with layer_norm
+
+```
+INFO:root:Epoch 3, Iter 4000, dev loss: 3.070076
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 15.07 seconds
+INFO:root:Epoch 3, Iter 4000, Train F1 score: 0.834436, Train EM score: 0.712000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 120.78 seconds
+INFO:root:Epoch 3, Iter 4000, Dev F1 score: 0.668219, Dev EM score: 0.522183
+```
+
+Sanity {"f1": 64.33516079852636, "exact_match": 56.79012345679013}
+Dev    {"f1": 72.5009416362869, "exact_match": 62.27057710501419}
 
 ## Backlog
 
