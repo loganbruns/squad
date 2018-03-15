@@ -71,6 +71,12 @@ class RNNEncoder(object):
             # Each is shape (batch_size, seq_len, hidden_size).
             (fw_out, bw_out), _ = tf.nn.bidirectional_dynamic_rnn(self.rnn_cell_fw, self.rnn_cell_bw, inputs, input_lens, swap_memory=True, dtype=tf.float32)
 
+            # add layer norm
+            with vs.variable_scope('fw_out', reuse=tf.AUTO_REUSE):
+                fw_out = tf.contrib.layers.layer_norm(fw_out)
+            with vs.variable_scope('bw_out', reuse=tf.AUTO_REUSE):
+                bw_out = tf.contrib.layers.layer_norm(bw_out)
+
             # Concatenate the forward and backward hidden states
             out = tf.concat([fw_out, bw_out], 2)
 
