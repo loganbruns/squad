@@ -652,6 +652,8 @@ Dev    {"f1": 72.27979367413685, "exact_match": 61.79754020813623}
 
 Note: very slow due to small batch size of 25
 
+# v10_3 self-attention of bidaf attention with attn_size=75
+
 # v11 multi-headed with separate projection matrices
 
 Aborted to restart with Cudnn
@@ -694,6 +696,21 @@ Dev    {"f1": 73.58635037870457, "exact_match": 63.10312204351939}
 # v12_2 try hidden size = 250
 
 # v12_3 add layer_norm at end of rnn output
+
+# v12_4 use adadelta optimizer with lr=.5
+
+Aborted due to slow learning. Will retry with lr=1
+
+```
+INFO:root:Epoch 2, Iter 1500, dev loss: 6.709846
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 11.49 seconds
+INFO:root:Epoch 2, Iter 1500, Train F1 score: 0.214812, Train EM score: 0.146000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 85.94 seconds
+INFO:root:Epoch 2, Iter 1500, Dev F1 score: 0.212121, Dev EM score: 0.140987
+INFO:root:Saving to ./experiments/v12_4/best_checkpoint/qa_best.ckpt...
+```
 
 # v13 add | c - a | style features to BiDaf
 
