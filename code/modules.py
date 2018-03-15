@@ -487,7 +487,7 @@ class SelfAttn(object):
     """Module for self attention.
     """
 
-    def __init__(self, keep_prob, context_vec_size):
+    def __init__(self, keep_prob, context_vec_size, attn_size=75):
         """
         Inputs:
           keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
@@ -495,6 +495,7 @@ class SelfAttn(object):
         """
         self.keep_prob = keep_prob
         self.context_vec_size = context_vec_size
+        self.attn_size = attn_size
 
     def build_graph(self, contexts, contexts_mask):
         """
@@ -512,15 +513,15 @@ class SelfAttn(object):
 
             # Calculate similarity
             num_contexts = contexts.get_shape().as_list()[1]
-            W_1 = tf.get_variable('W_1', shape=(self.context_vec_size, num_contexts), initializer=tf.contrib.layers.xavier_initializer())
-            W_2 = tf.get_variable('W_2', shape=(self.context_vec_size, num_contexts), initializer=tf.contrib.layers.xavier_initializer())
-            V = tf.get_variable('V', shape=(num_contexts, 1), initializer=tf.contrib.layers.xavier_initializer())
+            W_1 = tf.get_variable('W_1', shape=(self.context_vec_size, self.attn_size), initializer=tf.contrib.layers.xavier_initializer())
+            W_2 = tf.get_variable('W_2', shape=(self.context_vec_size, self.attn_size), initializer=tf.contrib.layers.xavier_initializer())
+            V = tf.get_variable('V', shape=(self.attn_size, 1), initializer=tf.contrib.layers.xavier_initializer())
             
             E = []
-            wi = tf.reshape(tf.tensordot(contexts, W_2, 1), shape=(-1, num_contexts, num_contexts))
-            wj = tf.reshape(tf.tensordot(contexts, W_1, 1), shape=(-1, num_contexts, num_contexts))
+            wi = tf.reshape(tf.tensordot(contexts, W_2, 1), shape=(-1, num_contexts, self.attn_size))
+            wj = tf.reshape(tf.tensordot(contexts, W_1, 1), shape=(-1, num_contexts, self.attn_size))
             for j in xrange(num_contexts):
-                w = tf.nn.tanh(wi + tf.expand_dims(wj[:,j,:], 2))
+                w = tf.nn.tanh(wi + tf.expand_dims(wj[:,j,:], 1))
                 e = tf.tensordot(w, V, 1)
                 e.set_shape(wi.get_shape()[0:2])
                 E += [e]
