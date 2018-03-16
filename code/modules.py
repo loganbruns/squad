@@ -457,17 +457,17 @@ class BiDafMultiHeadedAttn(object):
         """
         with vs.variable_scope("MultiHeadedAttn"):
 
-            W_qns = [tf.get_variable('W_qn_{}'.format(i), shape=(self.context_vec_size, self.context_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
+            W = [tf.get_variable('W_{}'.format(i), shape=(self.context_vec_size, self.context_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
+
             shape = qns.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_qns = [tf.reshape(tf.tensordot(qns, W_qns[i], 1), shape) for i in xrange(self.num_heads)]
+            scaled_qns = [tf.reshape(tf.tensordot(qns, W[i], 1), shape) for i in xrange(self.num_heads)]
             
-            W_contexts = [tf.get_variable('W_contexts_{}'.format(i), shape=(self.context_vec_size, self.context_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
             shape = contexts.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_contexts = [tf.reshape(tf.tensordot(contexts, W_contexts[i], 1), shape) for i in xrange(self.num_heads)]
+            scaled_contexts = [tf.reshape(tf.tensordot(contexts, W[i], 1), shape) for i in xrange(self.num_heads)]
             
             # shape (batch_size, num_qns, hidden_size, num_heads)
             outputs = tf.stack([self.scaled_attn[i].build_graph(scaled_qns[i], qns_mask, scaled_contexts[i], contexts_mask) for i in range(self.num_heads)], axis=3)
