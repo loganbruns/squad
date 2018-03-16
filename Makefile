@@ -1,4 +1,4 @@
-EXPERIMENT=v12_6
+EXPERIMENT=v12_7
 DESCRIPTION="$(EXPERIMENT): architecture iteration"
 WORKSPACE=main::cs224n-lbruns
 
