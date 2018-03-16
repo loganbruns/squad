@@ -654,6 +654,19 @@ Note: very slow due to small batch size of 25
 
 # v10_3 self-attention of bidaf attention with attn_size=75
 
+```
+INFO:root:Epoch 5, Iter 8000, dev loss: 3.197439
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 13.75 seconds
+INFO:root:Epoch 5, Iter 8000, Train F1 score: 0.867845, Train EM score: 0.730000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 110.98 seconds
+INFO:root:Epoch 5, Iter 8000, Dev F1 score: 0.679789, Dev EM score: 0.532480
+```
+
+Sanity {"f1": 68.24940412398973, "exact_match": 61.23456790123457}
+Dev    {"f1": 73.57862724757865, "exact_match": 62.980132450331126}
+
 # v11 multi-headed with separate projection matrices
 
 Aborted to restart with Cudnn
@@ -676,6 +689,19 @@ Dev    {"f1": 72.46684999452987, "exact_match": 62.37464522232734}
 # v11_2 multi-headed with separate projection matrices and shared W per head
 Share the same weight matrix per head such qn and contexts are more easily comparable
 
+```
+INFO:root:Epoch 6, Iter 10000, dev loss: 3.160727
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.71 seconds
+INFO:root:Epoch 6, Iter 10000, Train F1 score: 0.874699, Train EM score: 0.748000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 142.10 seconds
+INFO:root:Epoch 6, Iter 10000, Dev F1 score: 0.680009, Dev EM score: 0.531325
+```
+
+Sanity {"f1": 65.66194861169762, "exact_match": 58.51851851851852}
+Dev    {"f1": 73.71308043170023, "exact_match": 63.41532639545885}
+
 # v12 new baseline with CudnnCompatible* and swap_memory=True
 
 ```
@@ -693,9 +719,46 @@ Dev    {"f1": 73.58635037870457, "exact_match": 63.10312204351939}
 
 # v12_1 try RNN layers = 3
 
+Appears to be converging to v12 (only slower)
+
+```
+INFO:root:Epoch 8, Iter 6500, dev loss: 3.002166
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 18.78 seconds
+INFO:root:Epoch 8, Iter 6500, Train F1 score: 0.782680, Train EM score: 0.660000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 163.69 seconds
+INFO:root:Epoch 8, Iter 6500, Dev F1 score: 0.667698, Dev EM score: 0.517660
+```
+
+Sanity {"f1": 64.62205634468117, "exact_match": 57.28395061728395}
+Dev    {"f1": 72.23655320270973, "exact_match": 61.258278145695364}
+
 # v12_2 try hidden size = 250
 
+```
+Calculating dev loss...
+Epoch 10, Iter 8000, dev loss: 3.181835
+Epoch 10, Iter 8000, Train F1 score: 0.916957, Train EM score: 0.824000
+Epoch 10, Iter 8000, Dev F1 score: 0.681718, Dev EM score: 0.533635
+```
+
+Sanity {"f1": 64.27701969408896, "exact_match": 57.901234567901234}
+Dev    {"f1": 73.74353716544717, "exact_match": 63.614001892147584}
+
 # v12_3 add layer_norm at end of rnn output
+
+Does not seem to improve curve.
+
+```
+INFO:root:Epoch 7, Iter 5500, dev loss: 3.315401
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 15.30 seconds
+INFO:root:Epoch 7, Iter 5500, Train F1 score: 0.670365, Train EM score: 0.535000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 126.28 seconds
+INFO:root:Epoch 7, Iter 5500, Dev F1 score: 0.622911, Dev EM score: 0.470215
+```
 
 # v12_4 use adadelta optimizer with lr=.5
 
@@ -711,6 +774,29 @@ INFO:root:Calculating F1/EM for 10391 examples in dev set took 85.94 seconds
 INFO:root:Epoch 2, Iter 1500, Dev F1 score: 0.212121, Dev EM score: 0.140987
 INFO:root:Saving to ./experiments/v12_4/best_checkpoint/qa_best.ckpt...
 ```
+
+# v12_5 use adadelta optimizer with lr=1
+
+Aborted due to slow learning.
+
+# v12_6 stack RNN layers (2x2)
+
+# v12_7 stack RNN layers (2x1)
+
+```
+INFO:root:Epoch 7, Iter 6500, dev loss: 2.985729
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.28 seconds
+INFO:root:Epoch 7, Iter 6500, Train F1 score: 0.872066, Train EM score: 0.762000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 135.64 seconds
+INFO:root:Epoch 7, Iter 6500, Dev F1 score: 0.687000, Dev EM score: 0.536041
+```
+
+Sanity {"f1": 67.59769937539241, "exact_match": 60.370370370370374}
+Dev    {"f1": 74.34160453547857, "exact_match": 63.746452223273415}
+
+# v12_8 stack RNN layers (3x1)
 
 # v13 add | c - a | style features to BiDaf
 
@@ -742,7 +828,17 @@ INFO:root:Epoch 3, Iter 4000, Dev F1 score: 0.668219, Dev EM score: 0.522183
 Sanity {"f1": 64.33516079852636, "exact_match": 56.79012345679013}
 Dev    {"f1": 72.5009416362869, "exact_match": 62.27057710501419}
 
+# v15 self-attention of bidaf attention with attn_size=50
+(relative to v12_7)
+
+# v16 multi-headed with 4 heads instead of 8
+(relative to v12_7)
+
+# v17 200 dimensional embeddings
+
 ## Backlog
+
+# layer norm at end of attentions before concat
 
 # train half of embeddings
 
