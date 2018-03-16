@@ -138,8 +138,8 @@ class QAModel(object):
         # Use context hidden states to attend to question hidden states
         # attn_layer = BasicAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         # _, attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens) # attn_output is shape (batch_size, context_len, hidden_size*2)
-        # attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
-        attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
+        attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
+        # attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
         # self_attn_layer = SelfAttn(self.keep_prob, 8*self.FLAGS.hidden_size)
         # self_attn_output = self_attn_layer.build_graph(attn_output, self.context_mask) # self_attn_output is shape (batch_size, context_len, hidden_size)
