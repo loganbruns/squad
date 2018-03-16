@@ -1,10 +1,5 @@
-<<<<<<< dd6e4fc5288da82a47f261d575c24cd1012b3cd9
 EXPERIMENT=v12_7
 DESCRIPTION="$(EXPERIMENT): architecture iteration"
-=======
-EXPERIMENT=v11_2
-DESCRIPTION="$(EXPERIMENT): attention iteration"
->>>>>>> v11_2 multi-headed with separate projection matrices and shared W per head
 WORKSPACE=main::cs224n-lbruns
 
 all:
