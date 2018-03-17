@@ -462,6 +462,7 @@ class BiDafMultiHeadedAttn(object):
         with vs.variable_scope("MultiHeadedAttn"):
 
             W = [tf.get_variable('W_{}'.format(i), shape=(self.context_vec_size, self.context_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
+            W_loss = tf.reduce_sum([tf.norm(tf.matmul(W[i], W[j], transpose_b=True)) for i in xrange(self.num_heads) for j in range(i)])
 
             shape = qns.get_shape().as_list()
             shape[2] /= self.num_heads
@@ -479,7 +480,7 @@ class BiDafMultiHeadedAttn(object):
             # shape (batch_size, num_qns, num_heads * hidden_size)
             shape = outputs.get_shape().as_list()[0:2] + [self.num_heads*outputs.get_shape().as_list()[2]]
             shape[0] = -1
-            return tf.reshape(outputs, shape)
+            return tf.reshape(outputs, shape), W_loss
             # return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])
 
 
