@@ -288,7 +288,7 @@ class MultiHeadedAttn(object):
     module with other inputs.
     """
 
-    def __init__(self, keep_prob, key_vec_size, value_vec_size, num_values, num_heads=8):
+    def __init__(self, keep_prob, key_vec_size, value_vec_size, num_heads=4):
         """
         Inputs:
           keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
@@ -298,7 +298,6 @@ class MultiHeadedAttn(object):
         self.keep_prob = keep_prob
         self.key_vec_size = key_vec_size
         self.value_vec_size = value_vec_size
-        self.num_values = num_values
         self.num_heads = num_heads
         self.scaled_attn = [HeadAttn(keep_prob, key_vec_size / num_heads, value_vec_size / num_heads) for _ in range(num_heads)]
 
@@ -323,25 +322,26 @@ class MultiHeadedAttn(object):
         """
         with vs.variable_scope("MultiHeadedAttn"):
 
+            W = [tf.get_variable('W_{}'.format(i), shape=(self.value_vec_size, self.value_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
 
-            W_keys = tf.get_variable('W_keys', shape=(self.value_vec_size, self.value_vec_size), initializer=tf.contrib.layers.xavier_initializer())
-            shape = keys.get_shape().as_list() + [self.num_heads]
+            shape = keys.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_keys = tf.unstack(tf.reshape(tf.tensordot(keys, W_keys, 1), shape), axis=3)
-            W_values = tf.get_variable('W_values', shape=(self.value_vec_size, self.value_vec_size), initializer=tf.contrib.layers.xavier_initializer())
-            shape = values.get_shape().as_list() + [self.num_heads]
+            scaled_keys = [tf.reshape(tf.tensordot(keys, W[i], 1), shape) for i in xrange(self.num_heads)]
+
+            shape = values.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_values = tf.unstack(tf.reshape(tf.tensordot(values, W_values, 1), shape), axis=3)
-
+            scaled_values = [tf.reshape(tf.tensordot(values, W[i], 1), shape) for i in xrange(self.num_heads)]
+            
             # shape (batch_size, num_keys, hidden_size, num_heads)
             outputs = tf.stack([self.scaled_attn[i].build_graph(scaled_values[i], values, values_mask, scaled_keys[i])[1] for i in range(self.num_heads)], axis=3)
 
             # shape (batch_size, num_keys, hidden_size)
             shape = outputs.get_shape().as_list()[0:2] + [self.num_heads*outputs.get_shape().as_list()[2]]
             shape[0] = -1
-            return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])
+            return tf.reshape(outputs, shape)
+            # return tf.contrib.layers.fully_connected(tf.reshape(outputs, shape=shape), num_outputs=outputs.get_shape().as_list()[2])
 
 
 class BiDafAttn(object):
