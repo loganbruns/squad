@@ -427,7 +427,7 @@ class BiDafMultiHeadedAttn(object):
     module with other inputs.
     """
 
-    def __init__(self, keep_prob, qn_vec_size, context_vec_size, num_heads=8):
+    def __init__(self, keep_prob, qn_vec_size, context_vec_size, num_heads=4):
         """
         Inputs:
           keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
