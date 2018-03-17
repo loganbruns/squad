@@ -144,12 +144,12 @@ class QAModel(object):
         attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         # attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
-        # self_attn_layer = SelfAttn(self.keep_prob, 8*self.FLAGS.hidden_size)
-        # self_attn_output = self_attn_layer.build_graph(attn_output, self.context_mask) # self_attn_output is shape (batch_size, context_len, hidden_size)
+        self_attn_layer = SelfAttn(self.keep_prob, 8*self.FLAGS.hidden_size)
+        self_attn_output = self_attn_layer.build_graph(attn_output, self.context_mask) # self_attn_output is shape (batch_size, context_len, hidden_size)
 
         # Model layer
-        # blended_attn = tf.concat([attn_output, self_attn_output], axis=2) # (batch_size, context_len, hidden_size*16)
-        blended_attn = attn_output
+        blended_attn = tf.concat([attn_output, self_attn_output], axis=2) # (batch_size, context_len, hidden_size*16)
+        # blended_attn = attn_output
         with vs.variable_scope('ModelLayer'):
             encoder_model_layer = RNNEncoder(self.FLAGS.hidden_size, self.keep_prob)
             m = encoder_model_layer.build_graph(blended_attn, self.context_mask) # (batch_size, num_contexts, 2*hidden_size)

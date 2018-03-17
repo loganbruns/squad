@@ -487,7 +487,7 @@ class SelfAttn(object):
     """Module for self attention.
     """
 
-    def __init__(self, keep_prob, context_vec_size, attn_size=75):
+    def __init__(self, keep_prob, context_vec_size, attn_size=50):
         """
         Inputs:
           keep_prob: tensor containing a single scalar that is the keep probability (for dropout)
