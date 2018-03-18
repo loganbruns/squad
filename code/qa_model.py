@@ -138,15 +138,18 @@ class QAModel(object):
         # Use context hidden states to attend to question hidden states
         # attn_layer = BasicAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         # _, attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens) # attn_output is shape (batch_size, context_len, hidden_size*2)
-        # attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
-        attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
-        attn_output, self.attn_loss = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
+        attn_layer = BiDafAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
+        attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8        # attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
+        # attn_output, self.attn_loss = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
         # self_attn_layer = SelfAttn(self.keep_prob, 8*self.FLAGS.hidden_size)
         # self_attn_output = self_attn_layer.build_graph(attn_output, self.context_mask) # self_attn_output is shape (batch_size, context_len, hidden_size)
+        multi_attn_layer = MultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
+        multi_attn_output, self.attn_loss = multi_attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens) # attn_output is shape (batch_size, context_len, hidden_size*2)
 
         # Model layer
         # blended_attn = tf.concat([attn_output, self_attn_output], axis=2) # (batch_size, context_len, hidden_size*16)
-        blended_attn = attn_output
+        blended_attn = tf.concat([attn_output, multi_attn_output], axis=2) # (batch_size, context_len, hidden_size*16)
+        # blended_attn = attn_output
         with vs.variable_scope('ModelLayer'):
             encoder_model_layer = RNNEncoder(self.FLAGS.hidden_size, self.keep_prob)
             m = encoder_model_layer.build_graph(blended_attn, self.context_mask) # (batch_size, num_contexts, 2*hidden_size)
