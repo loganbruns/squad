@@ -515,6 +515,9 @@ class SelfAttn(object):
             num_contexts = contexts.get_shape().as_list()[1]
             W_1 = tf.get_variable('W_1', shape=(self.context_vec_size, self.attn_size), initializer=tf.contrib.layers.xavier_initializer())
             W_2 = tf.get_variable('W_2', shape=(self.context_vec_size, self.attn_size), initializer=tf.contrib.layers.xavier_initializer())
+            W_loss = tf.norm(tf.matmul(W_1, W_1, transpose_b=True) - tf.eye(self.context_vec_size))
+            W_loss += tf.norm(tf.matmul(W_2, W_2, transpose_b=True) - tf.eye(self.context_vec_size))
+            tf.summary.scalar('W_mean_norm', tf.reduce_mean([tf.norm(W_1), tf.norm(W_2)]))
             V = tf.get_variable('V', shape=(self.attn_size, 1), initializer=tf.contrib.layers.xavier_initializer())
             
             E = []
@@ -534,4 +537,4 @@ class SelfAttn(object):
             # Use C2C attention distribution to take weighted sum of contexts
             a = tf.matmul(attn_dist, contexts) # shape (batch_size, num_contexts, contexts_vec_size)
 
-            return a
+            return a, W_loss

@@ -145,7 +145,7 @@ class QAModel(object):
         # attn_layer = BiDafMultiHeadedAttn(self.keep_prob, self.FLAGS.hidden_size*2, self.FLAGS.hidden_size*2)
         attn_output = attn_layer.build_graph(question_hiddens, self.qn_mask, context_hiddens, self.context_mask) # attn_output is shape (batch_size, context_len, hidden_size*8)
         self_attn_layer = SelfAttn(self.keep_prob, 8*self.FLAGS.hidden_size)
-        self_attn_output = self_attn_layer.build_graph(attn_output, self.context_mask) # self_attn_output is shape (batch_size, context_len, hidden_size)
+        self_attn_output, self.attn_loss = self_attn_layer.build_graph(attn_output, self.context_mask) # self_attn_output is shape (batch_size, context_len, hidden_size)
 
         # Model layer
         blended_attn = tf.concat([attn_output, self_attn_output], axis=2) # (batch_size, context_len, hidden_size*16)
@@ -211,9 +211,10 @@ class QAModel(object):
             tf.summary.scalar('loss_end', self.loss_end)
 
             tf.summary.scalar('loss_embedding', self.loss_embedding)
+            tf.summary.scalar('loss_attn', self.attn_loss)
             
             # Add the two losses
-            self.loss = self.loss_start + self.loss_end + self.loss_embedding
+            self.loss = self.loss_start + self.loss_end + self.loss_embedding + self.attn_loss
             tf.summary.scalar('loss', self.loss)
 
 
