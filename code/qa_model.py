@@ -210,6 +210,8 @@ class QAModel(object):
             self.loss_end = tf.reduce_mean(loss_end)
             tf.summary.scalar('loss_end', self.loss_end)
 
+            tf.summary.scalar('loss_attn', self.attn_loss)
+
             # Add the two losses
             self.loss = self.loss_start + self.loss_end + self.attn_loss
             tf.summary.scalar('loss', self.loss)
