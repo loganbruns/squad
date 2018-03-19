@@ -781,6 +781,19 @@ Aborted due to slow learning.
 
 # v12_6 stack RNN layers (2x2)
 
+```
+INFO:root:Epoch 14, Iter 16500, dev loss: 3.356169
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 29.45 seconds
+INFO:root:Epoch 14, Iter 16500, Train F1 score: 0.882800, Train EM score: 0.775000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 272.67 seconds
+INFO:root:Epoch 14, Iter 16500, Dev F1 score: 0.673327, Dev EM score: 0.528823
+```
+
+Sanity {"f1": 63.0581082093823, "exact_match": 56.17283950617284}
+Dev    {"f1": 72.83562431371074, "exact_match": 62.69631031220435}
+
 # v12_7 stack RNN layers (2x1)
 
 ```
@@ -797,6 +810,20 @@ Sanity {"f1": 67.59769937539241, "exact_match": 60.370370370370374}
 Dev    {"f1": 74.34160453547857, "exact_match": 63.746452223273415}
 
 # v12_8 stack RNN layers (3x1)
+
+```
+INFO:root:Epoch 8, Iter 9000, dev loss: 3.056645
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 26.76 seconds
+INFO:root:Epoch 8, Iter 9000, Train F1 score: 0.858259, Train EM score: 0.729000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 244.81 seconds
+INFO:root:Epoch 8, Iter 9000, Dev F1 score: 0.690127, Dev EM score: 0.540949
+INFO:root:Saving to ./experiments/v12_8/best_checkpoint/qa_best.ckpt...
+```
+
+Sanity {"f1": 66.34450981713464, "exact_match": 58.888888888888886}
+Dev    {"f1": 74.49557453257329, "exact_match": 64.24787133396404}
 
 # v13 add | c - a | style features to BiDaf
 
@@ -828,13 +855,220 @@ INFO:root:Epoch 3, Iter 4000, Dev F1 score: 0.668219, Dev EM score: 0.522183
 Sanity {"f1": 64.33516079852636, "exact_match": 56.79012345679013}
 Dev    {"f1": 72.5009416362869, "exact_match": 62.27057710501419}
 
+# v14_1 make embeddings trainable with a loss term relative to originals
+(relative to v12_7)
+
+```
+INFO:root:Epoch 6, Iter 4500, dev loss: 3.086039
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 17.03 seconds
+INFO:root:Epoch 6, Iter 4500, Train F1 score: 0.887037, Train EM score: 0.772000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 139.59 seconds
+INFO:root:Epoch 6, Iter 4500, Dev F1 score: 0.690741, Dev EM score: 0.541238
+```
+
+Sanity {"f1": 65.89297986560469, "exact_match": 60.0}
+Dev    {"f1": 74.68961207605716, "exact_match": 64.54115421002838}
+#33 on dev leaderboard
+
 # v15 self-attention of bidaf attention with attn_size=50
 (relative to v12_7)
+
+```
+INFO:root:Epoch 12, Iter 9500, dev loss: 3.247487
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 14.57 seconds
+INFO:root:Epoch 12, Iter 9500, Train F1 score: 0.890551, Train EM score: 0.771000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 120.68 seconds
+INFO:root:Epoch 12, Iter 9500, Dev F1 score: 0.693712, Dev EM score: 0.547878
+```
+
+Sanity {"f1": 68.42045069814374, "exact_match": 61.60493827160494}
+Dev    {"f1": 74.84457410851721, "exact_match": 64.98580889309366}
+
+# v15_1 self-attention of bidaf attention with cross attention feature
+
+```
+INFO:root:Epoch 6, Iter 6500, dev loss: 2.880845
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 18.66 seconds
+INFO:root:Epoch 6, Iter 6500, Train F1 score: 0.792174, Train EM score: 0.662000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 162.84 seconds
+INFO:root:Epoch 6, Iter 6500, Dev F1 score: 0.689395, Dev EM score: 0.543259
+```
+
+Sanity {"f1": 67.5689438193464, "exact_match": 60.370370370370374}
+Dev    {"f1": 74.71791270873666, "exact_match": 64.720908230842}
+
+# v15_2 self-attention of bidaf attention with attn_size=100
+
+```
+INFO:root:Epoch 5, Iter 5500, dev loss: 2.899911
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 17.62 seconds
+INFO:root:Epoch 5, Iter 5500, Train F1 score: 0.786296, Train EM score: 0.646000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 150.73 seconds
+INFO:root:Epoch 5, Iter 5500, Dev F1 score: 0.684654, Dev EM score: 0.536714
+```
+
+Sanity {"f1": 65.3878289988554, "exact_match": 56.17283950617284}
+Dev    {"f1": 74.02533719751729, "exact_match": 63.73699148533586}
+
+# v15_3 self-attention of bidaf attention and orthogonality loss
+
+```
+INFO:root:Epoch 7, Iter 5500, dev loss: 81.656080
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 14.56 seconds
+INFO:root:Epoch 7, Iter 5500, Train F1 score: 0.853902, Train EM score: 0.738000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 121.70 seconds
+INFO:root:Epoch 7, Iter 5500, Dev F1 score: 0.686598, Dev EM score: 0.536522
+```
+
+Sanity {"f1": 68.63707060098082, "exact_match": 62.46913580246913}
+Dev    {"f1": 74.3349248055598, "exact_match": 63.99243140964995}
+
+# v15_4 self-attention of bidaf attention and diversity loss
+
+```
+INFO:root:Epoch 2, Iter 10500, dev loss: 3.511083
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 15.09 seconds
+INFO:root:Epoch 2, Iter 10500, Train F1 score: 0.955555, Train EM score: 0.890000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 120.52 seconds
+INFO:root:Epoch 2, Iter 10500, Dev F1 score: 0.686599, Dev EM score: 0.535271
+```
+
+Sanity {"f1": 66.76979829852336, "exact_match": 59.876543209876544}
+Dev    {"f1": 73.96536586259387, "exact_match": 63.24503311258278}
 
 # v16 multi-headed with 4 heads instead of 8
 (relative to v12_7)
 
+```
+INFO:root:Epoch 14, Iter 11500, dev loss: 3.194167
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 17.04 seconds
+INFO:root:Epoch 14, Iter 11500, Train F1 score: 0.896673, Train EM score: 0.782000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 145.44 seconds
+INFO:root:Epoch 14, Iter 11500, Dev F1 score: 0.683118, Dev EM score: 0.536714
+```
+
+Sanity {"f1": 66.03049427163761, "exact_match": 58.76543209876543}
+Dev    {"f1": 73.81476469731143, "exact_match": 63.661305581835386}
+
+# v16_1 multi-headed with original basic attention
+
+```
+INFO:root:Epoch 8, Iter 9000, dev loss: 2.941654
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 24.79 seconds
+INFO:root:Epoch 8, Iter 9000, Train F1 score: 0.791471, Train EM score: 0.650000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 218.68 seconds
+INFO:root:Epoch 8, Iter 9000, Dev F1 score: 0.684368, Dev EM score: 0.532576
+```
+
+Sanity {"f1": 67.1344705624331, "exact_match": 60.123456790123456}
+Dev    {"f1": 74.00610636156621, "exact_match": 63.528855250709555}
+
+after train-slow
+
+Dev    {"f1": 74.66017833088468, "exact_match": 64.30463576158941}
+
+# v16_2 multi-headed with bidaf and diversity loss addition
+
+```
+INFO:root:Epoch 2, Iter 10000, dev loss: 3.193834
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 17.35 seconds
+INFO:root:Epoch 2, Iter 10000, Train F1 score: 0.861112, Train EM score: 0.745000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 146.29 seconds
+INFO:root:Epoch 2, Iter 10000, Dev F1 score: 0.671152, Dev EM score: 0.527668
+```
+
+Sanity {"f1": 63.80541345396422, "exact_match": 57.407407407407405}
+Dev    {"f1": 72.44432041308498, "exact_match": 62.34626300851466}
+
+# v16_3 multi-headed with original basic attention and diversity loss addition
+
+```
+INFO:root:Epoch 10, Iter 11000, dev loss: 3.153353
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 24.38 seconds
+INFO:root:Epoch 10, Iter 11000, Train F1 score: 0.869879, Train EM score: 0.748000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 212.09 seconds
+INFO:root:Epoch 10, Iter 11000, Dev F1 score: 0.686256, Dev EM score: 0.535752
+```
+
+Sanity {"f1": 66.32659804873553, "exact_match": 58.888888888888886}
+Dev    {"f1": 74.09163479498308, "exact_match": 63.69914853358562}
+
+train-slow
+
+Sanity {"f1": 68.78652232691461, "exact_match": 60.370370370370374}
+Dev    {"f1": 74.66231751774502, "exact_match": 63.964049195837276}
+
+# v16_4 multi-headed with original basic attention, diversity loss addition, layer_norm
+
+# v16_5 multi-headed with original basic attention, diversity loss addition, eight heads
+
 # v17 200 dimensional embeddings
+
+```
+INFO:root:Epoch 10, Iter 8000, dev loss: 3.269544
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.49 seconds
+INFO:root:Epoch 10, Iter 8000, Train F1 score: 0.921450, Train EM score: 0.822000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 134.29 seconds
+INFO:root:Epoch 10, Iter 8000, Dev F1 score: 0.691624, Dev EM score: 0.540083
+```
+
+Sanity {"f1": 69.6038133767179, "exact_match": 61.60493827160494}
+Dev    {"f1": 74.54686193313371, "exact_match": 63.79375591296121}
+
+# v17_1 300 dimensional embeddings
+
+```
+INFO:root:Epoch 6, Iter 4500, dev loss: 3.065319
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.13 seconds
+INFO:root:Epoch 6, Iter 4500, Train F1 score: 0.876436, Train EM score: 0.749000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 135.43 seconds
+INFO:root:Epoch 6, Iter 4500, Dev F1 score: 0.682618, Dev EM score: 0.531518
+```
+
+Sanity {"f1": 63.986630042588196, "exact_match": 56.54320987654321}
+Dev    {"f1": 73.91397185393312, "exact_match": 63.292336802270576}
+
+# v17_2 adadelta with .5
+
+```
+INFO:root:Epoch 19, Iter 15500, dev loss: 3.275553
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.48 seconds
+INFO:root:Epoch 19, Iter 15500, Train F1 score: 0.771683, Train EM score: 0.639000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 137.75 seconds
+INFO:root:Epoch 19, Iter 15500, Dev F1 score: 0.642913, Dev EM score: 0.497738
+```
+
+Aborted due to slow progress
+
+# v18 merge v14_1 and increase embeddings to 200
+
+# v18_1 merge self attention
 
 ## Backlog
 
