@@ -1,4 +1,4 @@
-EXPERIMENT=v12_7
+EXPERIMENT=v14_1
 DESCRIPTION="$(EXPERIMENT): architecture iteration"
 WORKSPACE=main::cs224n-lbruns
 
@@ -21,7 +21,7 @@ upload:
 gen-answers: upload
 	@echo Generating answers for experiment $(EXPERIMENT)
 	cl run --name gen-answers-$(EXPERIMENT) --request-docker-image abisee/cs224n-dfp:v4 \
-		--request-cpus 1 --request-memory 2g --request-disk 1g --request-time 1d \
+		--request-cpus 1 --request-memory 4g --request-disk 1g --request-time 1d \
 		:code :best_checkpoint glove.txt:0x97c870/glove.6B.100d.txt data.json:0x4870af \
 		'python code/main.py --mode=official_eval --glove_path=glove.txt --json_in_path=data.json --ckpt_load_dir=best_checkpoint'
 	sleep 2
