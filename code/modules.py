@@ -324,16 +324,17 @@ class MultiHeadedAttn(object):
 
             W = [tf.get_variable('W_{}'.format(i), shape=(self.value_vec_size, self.value_vec_size / self.num_heads), initializer=tf.contrib.layers.xavier_initializer()) for i in xrange(self.num_heads)]
             W_loss = tf.reduce_sum([tf.norm(tf.matmul(W[i], W[j], transpose_b=True)) for i in xrange(self.num_heads) for j in range(i)])
+            tf.summary.scalar('W_mean_norm', tf.reduce_mean([tf.norm(W[i]) for i in xrange(self.num_heads)]))
 
             shape = keys.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_keys = [tf.reshape(tf.tensordot(keys, W[i], 1), shape) for i in xrange(self.num_heads)]
+            scaled_keys = [tf.reshape(tf.tensordot(tf.contrib.layers.layer_norm(keys), W[i], 1), shape) for i in xrange(self.num_heads)]
 
             shape = values.get_shape().as_list()
             shape[2] /= self.num_heads
             shape[0] = -1
-            scaled_values = [tf.reshape(tf.tensordot(values, W[i], 1), shape) for i in xrange(self.num_heads)]
+            scaled_values = [tf.reshape(tf.tensordot(tf.contrib.layers.layer_norm(values), W[i], 1), shape) for i in xrange(self.num_heads)]
             
             # shape (batch_size, num_keys, hidden_size, num_heads)
             outputs = tf.stack([self.scaled_attn[i].build_graph(scaled_values[i], values, values_mask, scaled_keys[i])[1] for i in range(self.num_heads)], axis=3)
