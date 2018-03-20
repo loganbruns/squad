@@ -31,6 +31,7 @@ from evaluate import exact_match_score, f1_score
 from data_batcher import get_batch_generator
 from pretty_print import print_example
 from modules import RNNEncoder, SimpleSoftmaxLayer, BasicAttn, MultiHeadedAttn, BiDafAttn, SelfAttn, BiDafMultiHeadedAttn
+from vocab import UNK_ID
 
 logging.basicConfig(level=logging.INFO)
 
@@ -117,7 +118,12 @@ class QAModel(object):
             # Get the word embeddings for the context and question,
             # using the placeholders self.context_ids and self.qn_ids
             self.context_embs = embedding_ops.embedding_lookup(embedding_matrix, self.context_ids) # shape (batch_size, context_len, embedding_size)
-            self.qn_embs = embedding_ops.embedding_lookup(embedding_matrix, self.qn_ids) # shape (batch_size, question_len, embedding_size)
+            unknown_prob = 0.10
+            probs = tf.random_uniform(tf.shape(self.qn_ids))
+            # unknowns = tf.constant(UNK_ID, shape=tf.shape(self.qn_ids))
+            unknowns = tf.ones(tf.shape(self.qn_ids), dtype=tf.int32)
+            qn_ids = tf.where(probs < unknown_prob, unknowns, self.qn_ids)
+            self.qn_embs = embedding_ops.embedding_lookup(embedding_matrix, qn_ids) # shape (batch_size, question_len, embedding_size)
 
 
     def build_graph(self):
