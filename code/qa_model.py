@@ -110,18 +110,20 @@ class QAModel(object):
         with vs.variable_scope("embeddings"):
 
             # Note: the embedding matrix is a tf.constant which means it's not a trainable parameter
+            embedding_matrix = tf.constant(emb_matrix, dtype=tf.float32, name="emb_matrix") # shape (400002, embedding_size)
             fixed_embedding_matrix = tf.contrib.layers.layer_norm(tf.constant(emb_matrix, dtype=tf.float32, name="emb_matrix")) # shape (400002, embedding_size)
             embedding_matrix = tf.get_variable('train_emb_matrix', initializer=fixed_embedding_matrix) # shape (400002, embedding_size)
             embedding_matrix = tf.contrib.layers.layer_norm(embedding_matrix)
             self.loss_embedding = .001 * tf.norm(tf.reduce_mean(embedding_matrix - fixed_embedding_matrix, axis=1))
 
-            # Get the word embeddings for the context and question,
-            # using the placeholders self.context_ids and self.qn_ids
-            unknown_prob = 0.10
-            probs = tf.random_uniform(tf.shape(self.context_ids))
-            # unknowns = tf.constant(UNK_ID, shape=tf.shape(self.qn_ids))
-            unknowns = tf.ones(tf.shape(self.context_ids), dtype=tf.int32)
-            context_ids = tf.where(probs < unknown_prob, unknowns, self.context_ids)
+            # # Get the word embeddings for the context and question,
+            # # using the placeholders self.context_ids and self.qn_ids
+            # unknown_prob = 0.10
+            # probs = tf.random_uniform(tf.shape(self.context_ids))
+            # # unknowns = tf.constant(UNK_ID, shape=tf.shape(self.qn_ids))
+            # unknowns = tf.ones(tf.shape(self.context_ids), dtype=tf.int32)
+            # context_ids = tf.where(probs < unknown_prob, unknowns, self.context_ids)
+            # self.context_embs = embedding_ops.embedding_lookup(embedding_matrix, self.context_ids) # shape (batch_size, context_len, embedding_size)
             self.context_embs = embedding_ops.embedding_lookup(embedding_matrix, self.context_ids) # shape (batch_size, context_len, embedding_size)
             self.qn_embs = embedding_ops.embedding_lookup(embedding_matrix, self.qn_ids) # shape (batch_size, question_len, embedding_size)
 
