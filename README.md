@@ -435,7 +435,7 @@ INFO:root:Epoch 12, Iter 9500, Dev F1 score: 0.664953, Dev EM score: 0.519199
 Sanity {"f1": 63.60864993886001, "exact_match": 55.67901234567901}
 Dev    {"f1": 72.17569729920082, "exact_match": 61.91106906338695}
 
-# v7 merge v6_7 and add two more fully connected output layers and update test span prediction
+## v7 merge v6_7 and add two more fully connected output layers and update test span prediction
 
 ```
 INFO:root:Epoch 9, Iter 7000, dev loss: 3.072619
@@ -470,7 +470,7 @@ With test span prediction changes
 Sanity {"f1": 67.76893773453804, "exact_match": 61.358024691358025}
 Dev    {"f1": 73.99727522796228, "exact_match": 63.33017975402081}
 
-# v7_1 remove attn_output from final concat and reduce final hidden layers by one
+## v7_1 remove attn_output from final concat and reduce final hidden layers by one
 
 ```
 INFO:root:Epoch 3, Iter 19500, dev loss: 3.300917
@@ -487,7 +487,7 @@ Dev    {"f1": 74.16875542104182, "exact_match": 63.87890255439925}
 
 (Span <= 15)
 
-# v7_2 reduce context_len to 400 from 600
+## v7_2 reduce context_len to 400 from 600
 *Faster*
 
 (Results relative to v7 not v7_1.)
@@ -504,7 +504,7 @@ INFO:root:Epoch 12, Iter 10000, Dev F1 score: 0.674911, Dev EM score: 0.520450
 Sanity {"f1": 66.31548093541456, "exact_match": 59.01234567901235}
 Dev    {"f1": 72.96486753246917, "exact_match": 61.97729422894986}
 
-# v7_3 merge v7_1 and v7_2
+## v7_3 merge v7_1 and v7_2
 
 ```
 INFO:root:Epoch 20, Iter 16500, dev loss: 3.642466
@@ -520,13 +520,13 @@ Sanity {"f1": 68.83982837808644, "exact_match": 62.22222222222222}
 Dev    {"f1": 74.08840183449259, "exact_match": 63.822138126773886}
 #11 on dev leaderboard
 
-# v7_3a change to span <= 15
+## v7_3a change to span <= 15
 
 Sanity {"f1": 69.05652619581767, "exact_match": 62.592592592592595}
 Dev    {"f1": 74.23802196743264, "exact_match": 64.24787133396404}
 #11 on dev leaderboard
 
-# v7_4 hidden size of 250
+## v7_4 hidden size of 250
 
 ```
 INFO:root:Epoch 6, Iter 13000, dev loss: 3.131100
@@ -541,10 +541,10 @@ INFO:root:Epoch 6, Iter 13000, Dev F1 score: 0.680004, Dev EM score: 0.532673
 Sanity {"f1": 67.9107345206716, "exact_match": 60.617283950617285}
 Dev    {"f1": 73.42958530887074, "exact_match": 63.074739829706715}
 
-# v7_5 hidden size of 300
+## v7_5 hidden size of 300
 Killed since it was slow
 
-# v8 separate bi-LSTM for end output
+## v8 separate bi-LSTM for end output
 Switched part way to --learning_rate=0.0005 --max_gradient_norm=3.5
 
 ```
@@ -584,7 +584,7 @@ INFO:root:Epoch 4, Iter 13000, Dev F1 score: 0.654272, Dev EM score: 0.508181
 Sanity {"f1": 62.62193004114403, "exact_match": 55.67901234567901}
 Dev    {"f1": 70.80925181075419, "exact_match": 60.55818353831599}
 
-# v9 multi-headed with merge of v7* and full size states for concat
+## v9 multi-headed with merge of v7* and full size states for concat
 
 ```
 INFO:root:Epoch 15, Iter 12500, dev loss: 3.025343
@@ -614,7 +614,7 @@ INFO:root:Epoch 2, Iter 16000, Dev F1 score: 0.676911, Dev EM score: 0.532095
 Sanity {"f1": 62.943974860844435, "exact_match": 56.41975308641975}
 Dev    {"f1": 72.83323025933947, "exact_match": 62.29895931882687}
 
-# v10 self-attention
+## v10 self-attention
 Self attention of bidaf attention projected to 2*hidden
 
 ```
@@ -629,12 +629,12 @@ INFO:root:Epoch 2, Iter 4500, Dev F1 score: 0.352584, Dev EM score: 0.239773
 
 Aborted due to slow learning
 
-# v10_1 self-attention of bidaf attention with no projection
+## v10_1 self-attention of bidaf attention with no projection
 Removed fully connected projection layer
 
 Aborted to restart with Cudnn
 
-# v10_2 self-attention of bidaf attention with no projection
+## v10_2 self-attention of bidaf attention with no projection
 Removed fully connected projection layer and switched to CudnnCompatible*
 
 ```
@@ -652,7 +652,7 @@ Dev    {"f1": 72.27979367413685, "exact_match": 61.79754020813623}
 
 Note: very slow due to small batch size of 25
 
-# v10_3 self-attention of bidaf attention with attn_size=75
+## v10_3 self-attention of bidaf attention with attn_size=75
 
 ```
 INFO:root:Epoch 5, Iter 8000, dev loss: 3.197439
@@ -667,11 +667,11 @@ INFO:root:Epoch 5, Iter 8000, Dev F1 score: 0.679789, Dev EM score: 0.532480
 Sanity {"f1": 68.24940412398973, "exact_match": 61.23456790123457}
 Dev    {"f1": 73.57862724757865, "exact_match": 62.980132450331126}
 
-# v11 multi-headed with separate projection matrices
+## v11 multi-headed with separate projection matrices
 
 Aborted to restart with Cudnn
 
-# v11_1 multi-headed with separate projection matrices
+## v11_1 multi-headed with separate projection matrices
 
 ```
 INFO:root:Epoch 7, Iter 7500, dev loss: 3.002624
@@ -686,7 +686,7 @@ INFO:root:Epoch 7, Iter 7500, Dev F1 score: 0.668733, Dev EM score: 0.524107
 Sanity {"f1": 65.71772165330948, "exact_match": 58.641975308641975}
 Dev    {"f1": 72.46684999452987, "exact_match": 62.37464522232734}
 
-# v11_2 multi-headed with separate projection matrices and shared W per head
+## v11_2 multi-headed with separate projection matrices and shared W per head
 Share the same weight matrix per head such qn and contexts are more easily comparable
 
 ```
@@ -702,7 +702,7 @@ INFO:root:Epoch 6, Iter 10000, Dev F1 score: 0.680009, Dev EM score: 0.531325
 Sanity {"f1": 65.66194861169762, "exact_match": 58.51851851851852}
 Dev    {"f1": 73.71308043170023, "exact_match": 63.41532639545885}
 
-# v12 new baseline with CudnnCompatible* and swap_memory=True
+## v12 new baseline with CudnnCompatible* and swap_memory=True
 
 ```
 INFO:root:Epoch 7, Iter 8500, dev loss: 3.027820
@@ -717,7 +717,7 @@ INFO:root:Epoch 7, Iter 8500, Dev F1 score: 0.679710, Dev EM score: 0.532480
 Sanity {"f1": 65.93260656263881, "exact_match": 59.25925925925926}
 Dev    {"f1": 73.58635037870457, "exact_match": 63.10312204351939}
 
-# v12_1 try RNN layers = 3
+## v12_1 try RNN layers = 3
 
 Appears to be converging to v12 (only slower)
 
@@ -734,7 +734,7 @@ INFO:root:Epoch 8, Iter 6500, Dev F1 score: 0.667698, Dev EM score: 0.517660
 Sanity {"f1": 64.62205634468117, "exact_match": 57.28395061728395}
 Dev    {"f1": 72.23655320270973, "exact_match": 61.258278145695364}
 
-# v12_2 try hidden size = 250
+## v12_2 try hidden size = 250
 
 ```
 Calculating dev loss...
@@ -746,7 +746,7 @@ Epoch 10, Iter 8000, Dev F1 score: 0.681718, Dev EM score: 0.533635
 Sanity {"f1": 64.27701969408896, "exact_match": 57.901234567901234}
 Dev    {"f1": 73.74353716544717, "exact_match": 63.614001892147584}
 
-# v12_3 add layer_norm at end of rnn output
+## v12_3 add layer_norm at end of rnn output
 
 Does not seem to improve curve.
 
@@ -760,7 +760,7 @@ INFO:root:Calculating F1/EM for 10391 examples in dev set took 126.28 seconds
 INFO:root:Epoch 7, Iter 5500, Dev F1 score: 0.622911, Dev EM score: 0.470215
 ```
 
-# v12_4 use adadelta optimizer with lr=.5
+## v12_4 use adadelta optimizer with lr=.5
 
 Aborted due to slow learning. Will retry with lr=1
 
@@ -775,11 +775,11 @@ INFO:root:Epoch 2, Iter 1500, Dev F1 score: 0.212121, Dev EM score: 0.140987
 INFO:root:Saving to ./experiments/v12_4/best_checkpoint/qa_best.ckpt...
 ```
 
-# v12_5 use adadelta optimizer with lr=1
+## v12_5 use adadelta optimizer with lr=1
 
 Aborted due to slow learning.
 
-# v12_6 stack RNN layers (2x2)
+## v12_6 stack RNN layers (2x2)
 
 ```
 INFO:root:Epoch 14, Iter 16500, dev loss: 3.356169
@@ -794,7 +794,7 @@ INFO:root:Epoch 14, Iter 16500, Dev F1 score: 0.673327, Dev EM score: 0.528823
 Sanity {"f1": 63.0581082093823, "exact_match": 56.17283950617284}
 Dev    {"f1": 72.83562431371074, "exact_match": 62.69631031220435}
 
-# v12_7 stack RNN layers (2x1)
+## v12_7 stack RNN layers (2x1)
 
 ```
 INFO:root:Epoch 7, Iter 6500, dev loss: 2.985729
@@ -809,7 +809,7 @@ INFO:root:Epoch 7, Iter 6500, Dev F1 score: 0.687000, Dev EM score: 0.536041
 Sanity {"f1": 67.59769937539241, "exact_match": 60.370370370370374}
 Dev    {"f1": 74.34160453547857, "exact_match": 63.746452223273415}
 
-# v12_8 stack RNN layers (3x1)
+## v12_8 stack RNN layers (3x1)
 
 ```
 INFO:root:Epoch 8, Iter 9000, dev loss: 3.056645
@@ -825,7 +825,7 @@ INFO:root:Saving to ./experiments/v12_8/best_checkpoint/qa_best.ckpt...
 Sanity {"f1": 66.34450981713464, "exact_match": 58.888888888888886}
 Dev    {"f1": 74.49557453257329, "exact_match": 64.24787133396404}
 
-# v13 add | c - a | style features to BiDaf
+## v13 add | c - a | style features to BiDaf
 
 ```
 INFO:root:Epoch 14, Iter 13000, dev loss: 3.442659
@@ -840,7 +840,7 @@ INFO:root:Epoch 14, Iter 13000, Dev F1 score: 0.665741, Dev EM score: 0.518814
 Sanity {"f1": 66.34345805682364, "exact_match": 59.75308641975309}
 Dev    {"f1": 71.91682622965291, "exact_match": 61.49479659413434}
 
-# v14 make embeddings trainable regularized with layer_norm
+## v14 make embeddings trainable regularized with layer_norm
 
 ```
 INFO:root:Epoch 3, Iter 4000, dev loss: 3.070076
@@ -855,7 +855,7 @@ INFO:root:Epoch 3, Iter 4000, Dev F1 score: 0.668219, Dev EM score: 0.522183
 Sanity {"f1": 64.33516079852636, "exact_match": 56.79012345679013}
 Dev    {"f1": 72.5009416362869, "exact_match": 62.27057710501419}
 
-# v14_1 make embeddings trainable with a loss term relative to originals
+## v14_1 make embeddings trainable with a loss term relative to originals
 (relative to v12_7)
 
 ```
@@ -872,7 +872,7 @@ Sanity {"f1": 65.89297986560469, "exact_match": 60.0}
 Dev    {"f1": 74.68961207605716, "exact_match": 64.54115421002838}
 #33 on dev leaderboard
 
-# v15 self-attention of bidaf attention with attn_size=50
+## v15 self-attention of bidaf attention with attn_size=50
 (relative to v12_7)
 
 ```
@@ -888,7 +888,7 @@ INFO:root:Epoch 12, Iter 9500, Dev F1 score: 0.693712, Dev EM score: 0.547878
 Sanity {"f1": 68.42045069814374, "exact_match": 61.60493827160494}
 Dev    {"f1": 74.84457410851721, "exact_match": 64.98580889309366}
 
-# v15_1 self-attention of bidaf attention with cross attention feature
+## v15_1 self-attention of bidaf attention with cross attention feature
 
 ```
 INFO:root:Epoch 6, Iter 6500, dev loss: 2.880845
@@ -903,7 +903,7 @@ INFO:root:Epoch 6, Iter 6500, Dev F1 score: 0.689395, Dev EM score: 0.543259
 Sanity {"f1": 67.5689438193464, "exact_match": 60.370370370370374}
 Dev    {"f1": 74.71791270873666, "exact_match": 64.720908230842}
 
-# v15_2 self-attention of bidaf attention with attn_size=100
+## v15_2 self-attention of bidaf attention with attn_size=100
 
 ```
 INFO:root:Epoch 5, Iter 5500, dev loss: 2.899911
@@ -918,7 +918,7 @@ INFO:root:Epoch 5, Iter 5500, Dev F1 score: 0.684654, Dev EM score: 0.536714
 Sanity {"f1": 65.3878289988554, "exact_match": 56.17283950617284}
 Dev    {"f1": 74.02533719751729, "exact_match": 63.73699148533586}
 
-# v15_3 self-attention of bidaf attention and orthogonality loss
+## v15_3 self-attention of bidaf attention and orthogonality loss
 
 ```
 INFO:root:Epoch 7, Iter 5500, dev loss: 81.656080
@@ -933,7 +933,7 @@ INFO:root:Epoch 7, Iter 5500, Dev F1 score: 0.686598, Dev EM score: 0.536522
 Sanity {"f1": 68.63707060098082, "exact_match": 62.46913580246913}
 Dev    {"f1": 74.3349248055598, "exact_match": 63.99243140964995}
 
-# v15_4 self-attention of bidaf attention and diversity loss
+## v15_4 self-attention of bidaf attention and diversity loss
 
 ```
 INFO:root:Epoch 2, Iter 10500, dev loss: 3.511083
@@ -948,7 +948,7 @@ INFO:root:Epoch 2, Iter 10500, Dev F1 score: 0.686599, Dev EM score: 0.535271
 Sanity {"f1": 66.76979829852336, "exact_match": 59.876543209876544}
 Dev    {"f1": 73.96536586259387, "exact_match": 63.24503311258278}
 
-# v16 multi-headed with 4 heads instead of 8
+## v16 multi-headed with 4 heads instead of 8
 (relative to v12_7)
 
 ```
@@ -964,7 +964,7 @@ INFO:root:Epoch 14, Iter 11500, Dev F1 score: 0.683118, Dev EM score: 0.536714
 Sanity {"f1": 66.03049427163761, "exact_match": 58.76543209876543}
 Dev    {"f1": 73.81476469731143, "exact_match": 63.661305581835386}
 
-# v16_1 multi-headed with original basic attention
+## v16_1 multi-headed with original basic attention
 
 ```
 INFO:root:Epoch 8, Iter 9000, dev loss: 2.941654
@@ -983,7 +983,7 @@ after train-slow
 
 Dev    {"f1": 74.66017833088468, "exact_match": 64.30463576158941}
 
-# v16_2 multi-headed with bidaf and diversity loss addition
+## v16_2 multi-headed with bidaf and diversity loss addition
 
 ```
 INFO:root:Epoch 2, Iter 10000, dev loss: 3.193834
@@ -998,7 +998,7 @@ INFO:root:Epoch 2, Iter 10000, Dev F1 score: 0.671152, Dev EM score: 0.527668
 Sanity {"f1": 63.80541345396422, "exact_match": 57.407407407407405}
 Dev    {"f1": 72.44432041308498, "exact_match": 62.34626300851466}
 
-# v16_3 multi-headed with original basic attention and diversity loss addition
+## v16_3 multi-headed with original basic attention and diversity loss addition
 
 ```
 INFO:root:Epoch 10, Iter 11000, dev loss: 3.153353
@@ -1018,11 +1018,24 @@ train-slow
 Sanity {"f1": 68.78652232691461, "exact_match": 60.370370370370374}
 Dev    {"f1": 74.66231751774502, "exact_match": 63.964049195837276}
 
-# v16_4 multi-headed with original basic attention, diversity loss addition, layer_norm
+## v16_4 multi-headed with original basic attention, diversity loss addition, layer_norm
 
-# v16_5 multi-headed with original basic attention, diversity loss addition, eight heads
+```
+INFO:root:Epoch 17, Iter 19500, dev loss: 3.398669
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 24.25 seconds
+INFO:root:Epoch 17, Iter 19500, Train F1 score: 0.769239, Train EM score: 0.636000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 220.18 seconds
+INFO:root:Epoch 17, Iter 19500, Dev F1 score: 0.671809, Dev EM score: 0.521028
+```
 
-# v17 200 dimensional embeddings
+Sanity {"f1": 65.37629663547116, "exact_match": 57.53086419753087}
+Dev    {"f1": 72.8397258062988, "exact_match": 62.02459791863765}
+
+## v16_5 multi-headed with original basic attention, diversity loss addition, eight heads
+
+## v17 200 dimensional embeddings
 
 ```
 INFO:root:Epoch 10, Iter 8000, dev loss: 3.269544
@@ -1037,7 +1050,7 @@ INFO:root:Epoch 10, Iter 8000, Dev F1 score: 0.691624, Dev EM score: 0.540083
 Sanity {"f1": 69.6038133767179, "exact_match": 61.60493827160494}
 Dev    {"f1": 74.54686193313371, "exact_match": 63.79375591296121}
 
-# v17_1 300 dimensional embeddings
+## v17_1 300 dimensional embeddings
 
 ```
 INFO:root:Epoch 6, Iter 4500, dev loss: 3.065319
@@ -1052,7 +1065,7 @@ INFO:root:Epoch 6, Iter 4500, Dev F1 score: 0.682618, Dev EM score: 0.531518
 Sanity {"f1": 63.986630042588196, "exact_match": 56.54320987654321}
 Dev    {"f1": 73.91397185393312, "exact_match": 63.292336802270576}
 
-# v17_2 adadelta with .5
+## v17_2 adadelta with .5
 
 ```
 INFO:root:Epoch 19, Iter 15500, dev loss: 3.275553
@@ -1066,34 +1079,156 @@ INFO:root:Epoch 19, Iter 15500, Dev F1 score: 0.642913, Dev EM score: 0.497738
 
 Aborted due to slow progress
 
-# v18 merge v14_1 and increase embeddings to 200
+## v18 merge v14_1 and increase embeddings to 200
 
-# v18_1 merge self attention
+```
+INFO:root:Epoch 6, Iter 6000, dev loss: 3.041146
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 20.43 seconds
+INFO:root:Epoch 6, Iter 6000, Train F1 score: 0.912042, Train EM score: 0.811000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 176.20 seconds
+INFO:root:Epoch 6, Iter 6000, Dev F1 score: 0.685901, Dev EM score: 0.534790
+```
 
-## Backlog
+Sanity {"f1": 66.75444367113904, "exact_match": 58.02469135802469}
+Dev    {"f1": 74.17111684576615, "exact_match": 63.35856196783349}
 
-# layer norm at end of attentions before concat
+## v18_1 merge self attention
 
-# train half of embeddings
+```
+INFO:root:Epoch 8, Iter 9000, dev loss: 3.529354
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 17.81 seconds
+INFO:root:Epoch 8, Iter 9000, Train F1 score: 0.908688, Train EM score: 0.814000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 155.85 seconds
+INFO:root:Epoch 8, Iter 9000, Dev F1 score: 0.681106, Dev EM score: 0.532865
+```
 
-# adjust dropout
+Sanity {"f1": 67.78147102212704, "exact_match": 58.76543209876543}
+Dev    {"f1": 73.58827318534182, "exact_match": 63.18826868495743}
 
-# adadelta optimizer
+## v18_2 rerun v18
 
-# n-grams
+```
+INFO:root:Epoch 5, Iter 5000, dev loss: 3.022299
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 20.89 seconds
+INFO:root:Epoch 5, Iter 5000, Train F1 score: 0.870375, Train EM score: 0.747000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 179.86 seconds
+INFO:root:Epoch 5, Iter 5000, Dev F1 score: 0.684122, Dev EM score: 0.529593
+```
 
-# positional features
+Sanity {"f1": 64.5926390316668, "exact_match": 55.80246913580247}
+Dev    {"f1": 73.89543442321445, "exact_match": 62.8949858088931}
 
-# similarity head from bidaf for multiheaded
+More time
 
-# bidaf
+```
+Epoch 1, Iter 9500, dev loss: 3.513365
+Calculating F1/EM for 1000 examples in train set...
+Calculating F1/EM for 1000 examples in train set took 20.28 seconds
+Epoch 1, Iter 9500, Train F1 score: 0.933472, Train EM score: 0.844000
+Calculating F1/EM for all examples in dev set...
+Calculating F1/EM for 10391 examples in dev set took 179.49 seconds
+Epoch 1, Iter 9500, Dev F1 score: 0.688439, Dev EM score: 0.536714
+```
 
-# more stacking for rnn cells
+Sanity {"f1": 66.55425488314621, "exact_match": 58.51851851851852}
+Dev    {"f1": 74.42028860761968, "exact_match": 63.7275307473983}
 
-# feed forward before softmax
+## v18_3 rerun v18
 
-# residuals via short circuits and layernorm
+```
+INFO:root:Epoch 5, Iter 5500, dev loss: 3.191027
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 20.49 seconds
+INFO:root:Epoch 5, Iter 5500, Train F1 score: 0.839143, Train EM score: 0.719000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 177.12 seconds
+INFO:root:Epoch 5, Iter 5500, Dev F1 score: 0.683081, Dev EM score: 0.531518
+```
 
-# multiheaded attention
+Sanity {"f1": 66.00362835533815, "exact_match": 56.91358024691358}
+Dev    {"f1": 74.00090238072025, "exact_match": 63.48155156102176}
 
-# revisit attention bilinear form with regularization
+## v18_4 rerun v18
+
+```
+INFO:root:Epoch 4, Iter 7500, dev loss: 3.135208
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 21.28 seconds
+INFO:root:Epoch 4, Iter 7500, Train F1 score: 0.885602, Train EM score: 0.791000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 183.33 seconds
+INFO:root:Epoch 4, Iter 7500, Dev F1 score: 0.680744, Dev EM score: 0.531614
+```
+
+Sanity {"f1": 64.65204144874038, "exact_match": 57.28395061728395}
+Dev    {"f1": 73.67780459564382, "exact_match": 63.33964049195837}
+
+## v18_5 rerun v18
+
+## v19 add word dropout on questions
+
+```
+INFO:root:Epoch 1, Iter 10000, dev loss: 3.392499
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 16.01 seconds
+INFO:root:Epoch 1, Iter 10000, Train F1 score: 0.857063, Train EM score: 0.750000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 134.73 seconds
+INFO:root:Epoch 1, Iter 10000, Dev F1 score: 0.654213, Dev EM score: 0.510538
+```
+
+Sanity {"f1": 64.27570619277547, "exact_match": 56.41975308641975}
+Dev    {"f1": 70.51730121697514, "exact_match": 60.122989593188265}
+
+## v19_1 add word dropout on contexts
+
+```
+INFO:root:Epoch 5, Iter 5500, dev loss: 3.105663
+INFO:root:Calculating F1/EM for 1000 examples in train set...
+INFO:root:Calculating F1/EM for 1000 examples in train set took 15.64 seconds
+INFO:root:Epoch 5, Iter 5500, Train F1 score: 0.852134, Train EM score: 0.739000
+INFO:root:Calculating F1/EM for all examples in dev set...
+INFO:root:Calculating F1/EM for 10391 examples in dev set took 132.68 seconds
+INFO:root:Epoch 5, Iter 5500, Dev F1 score: 0.682386, Dev EM score: 0.530748
+```
+
+Sanity {"f1": 64.62890904342704, "exact_match": 55.80246913580247}
+Dev    {"f1": 73.7616142761364, "exact_match": 63.065279091769156}
+
+## v20 back to 100 dimensional embeddings
+
+## v20_1 rerun v20
+
+# Backlog
+
+- layer norm at end of attentions before concat
+
+- train half of embeddings
+
+- adjust dropout
+
+- adadelta optimizer
+
+- n-grams
+
+- positional features
+
+- similarity head from bidaf for multiheaded
+
+- bidaf
+
+- more stacking for rnn cells
+
+- feed forward before softmax
+
+- residuals via short circuits and layernorm
+
+- multiheaded attention
+
+- revisit attention bilinear form with regularization
