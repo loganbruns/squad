@@ -1034,6 +1034,7 @@ Sanity {"f1": 65.37629663547116, "exact_match": 57.53086419753087}
 Dev    {"f1": 72.8397258062988, "exact_match": 62.02459791863765}
 
 ## v16_5 multi-headed with original basic attention, diversity loss addition, eight heads
+Very slow learning and training rates and appears to be converging to the same place. 
 
 ## v17 200 dimensional embeddings
 
@@ -1204,6 +1205,8 @@ Dev    {"f1": 73.7616142761364, "exact_match": 63.065279091769156}
 ## v20 back to 100 dimensional embeddings
 
 ## v20_1 rerun v20
+
+## v20_2 rerun v20
 
 # Backlog
 
