@@ -1,5 +1,6 @@
-EXPERIMENT=v20
-DESCRIPTION="$(EXPERIMENT): architecture iteration"
+#EXPERIMENT=v18,v18_2,v18_3,v18_4,v18_5
+EXPERIMENT=v18_ensemble
+DESCRIPTION="$(EXPERIMENT): ensemble"
 WORKSPACE=main::cs224n-lbruns
 
 all:
@@ -18,6 +19,16 @@ upload:
 	cl upload experiments/$(EXPERIMENT)/best_checkpoint
 	sleep 2
 
+ensemble-upload:
+	@echo Uploading experiment $(EXPERIMENT)
+	cl upload code
+	cl upload experiments/v18/best_checkpoint
+	cl upload experiments/v18_2/best_checkpoint
+	cl upload experiments/v18_3/best_checkpoint
+	cl upload experiments/v18_4/best_checkpoint
+	cl upload experiments/v18_5/best_checkpoint
+	sleep 2
+
 gen-answers: upload
 	@echo Generating answers for experiment $(EXPERIMENT)
 	cl run --name gen-answers-$(EXPERIMENT) --request-docker-image abisee/cs224n-dfp:v4 \
@@ -28,6 +39,25 @@ gen-answers: upload
 	time cl wait --tail gen-answers-$(EXPERIMENT)
 
 run-eval: gen-answers
+	@echo Running eval for experiment $(EXPERIMENT)
+	cl run --name run-eval-$(EXPERIMENT) --request-docker-image abisee/cs224n-dfp:v4 \
+		--request-cpus 1 --request-memory 2g --request-disk 1g --request-time 1d \
+		:code data.json:0x4870af preds.json:gen-answers-$(EXPERIMENT)/predictions.json \
+		'python code/evaluate.py data.json preds.json'
+	sleep 2
+	time cl wait --tail run-eval-$(EXPERIMENT)
+
+ensemble-gen-answers:
+	@echo Generating answers for experiment $(EXPERIMENT)
+	cl run --name gen-answers-$(EXPERIMENT) --request-docker-image abisee/cs224n-dfp:v4 \
+		--request-cpus 1 --request-memory 16g --request-disk 1g --request-time 1d \
+		:code :best_checkpoint_v18 :best_checkpoint_v18_2 :best_checkpoint_v18_3 :best_checkpoint_v18_4 :best_checkpoint_v18_5 \
+		glove.txt:0x97c870/glove.6B.200d.txt data.json:0x4870af \
+		'python code/main.py --mode=official_eval --glove_path=glove.txt --json_in_path=data.json --ckpt_load_dir=best_checkpoint'
+	sleep 2
+	time cl wait --tail gen-answers-$(EXPERIMENT)
+
+ensemble-run-eval: ensemble-gen-answers
 	@echo Running eval for experiment $(EXPERIMENT)
 	cl run --name run-eval-$(EXPERIMENT) --request-docker-image abisee/cs224n-dfp:v4 \
 		--request-cpus 1 --request-memory 2g --request-disk 1g --request-time 1d \
