@@ -114,7 +114,7 @@ class QAModel(object):
             fixed_embedding_matrix = tf.contrib.layers.layer_norm(tf.constant(emb_matrix, dtype=tf.float32, name="emb_matrix")) # shape (400002, embedding_size)
             embedding_matrix = tf.get_variable('train_emb_matrix', initializer=fixed_embedding_matrix) # shape (400002, embedding_size)
             embedding_matrix = tf.contrib.layers.layer_norm(embedding_matrix)
-            self.loss_embedding = .001 * tf.norm(tf.reduce_mean(embedding_matrix - fixed_embedding_matrix, axis=1))
+            self.loss_embedding = .01 * tf.norm(tf.reduce_mean(embedding_matrix - fixed_embedding_matrix, axis=1))
 
             # # Get the word embeddings for the context and question,
             # # using the placeholders self.context_ids and self.qn_ids

@@ -1,5 +1,4 @@
-#EXPERIMENT=v18,v18_2,v18_3,v18_4,v18_5
-EXPERIMENT=v18_ensemble
+EXPERIMENT=v21
 DESCRIPTION="$(EXPERIMENT): ensemble"
 WORKSPACE=main::cs224n-lbruns
 
