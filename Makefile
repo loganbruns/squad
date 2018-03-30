@@ -1,5 +1,5 @@
-EXPERIMENT=v21
-DESCRIPTION="$(EXPERIMENT): ensemble"
+EXPERIMENT=v22
+DESCRIPTION="$(EXPERIMENT): context word dropout"
 WORKSPACE=main::cs224n-lbruns
 
 all:

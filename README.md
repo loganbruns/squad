@@ -1204,9 +1204,69 @@ Dev    {"f1": 73.7616142761364, "exact_match": 63.065279091769156}
 
 ## v20 back to 100 dimensional embeddings
 
+```
+Epoch 6, Iter 5000, dev loss: 3.034356
+Epoch 6, Iter 5000, Train F1 score: 0.848582, Train EM score: 0.724000
+Epoch 6, Iter 5000, Dev F1 score: 0.687549, Dev EM score: 0.540853
+```
+
+Sanity {"f1": 66.48869964650964, "exact_match": 59.50617283950617}
+Dev    {"f1": 74.15823742078166, "exact_match": 63.982970671712394}
+
 ## v20_1 rerun v20
 
+```
+Epoch 6, Iter 4500, dev loss: 3.047778
+Epoch 6, Iter 4500, Train F1 score: 0.882214, Train EM score: 0.756000
+Epoch 6, Iter 4500, Dev F1 score: 0.688294, Dev EM score: 0.538158
+```
+
+Sanity {"f1": 65.12398620757757, "exact_match": 56.54320987654321}
+Dev    {"f1": 74.53615096243219, "exact_match": 64.30463576158941}
+
 ## v20_2 rerun v20
+
+```
+Epoch 3, Iter 5500, dev loss: 3.073231
+Epoch 3, Iter 5500, Train F1 score: 0.905314, Train EM score: 0.791000
+Epoch 3, Iter 5500, Dev F1 score: 0.686208, Dev EM score: 0.542681
+```
+
+Sanity {"f1": 65.66281188543671, "exact_match": 59.135802469135804}
+Dev    {"f1": 74.1132853060881, "exact_match": 63.99243140964995}
+
+## v21 .01 for lambda for embeddings loss (kept)
+
+```
+INFO:root:Epoch 8, Iter 6500, dev loss: 3.059520
+INFO:root:Epoch 8, Iter 6500, Train F1 score: 0.894753, Train EM score: 0.788000
+INFO:root:Epoch 8, Iter 6500, Dev F1 score: 0.694040, Dev EM score: 0.547493
+```
+
+Sanity {"f1": 65.29490751704502, "exact_match": 57.03703703703704}
+Dev    {"f1": 74.97793044159951, "exact_match": 64.8155156102176}
+
+## v21_1 .1 for lambda for embeddings loss
+
+```
+INFO:root:Epoch 6, Iter 4500, dev loss: 3.063017
+INFO:root:Epoch 6, Iter 4500, Train F1 score: 0.883729, Train EM score: 0.755000
+INFO:root:Epoch 6, Iter 4500, Dev F1 score: 0.692043, Dev EM score: 0.541526
+```
+
+Sanity {"f1": 65.08686656875066, "exact_match": 56.666666666666664}
+Dev    {"f1": 74.8216120376559, "exact_match": 64.78713339640493}
+
+## v22 context word dropout (kept)
+
+```
+Epoch 3, Iter 13000, dev loss: 3.216774
+Epoch 3, Iter 13000, Train F1 score: 0.932283, Train EM score: 0.834000
+Epoch 3, Iter 13000, Dev F1 score: 0.697966, Dev EM score: 0.549322
+```
+
+Sanity {"f1": 66.83285682073218, "exact_match": 59.25925925925926}
+Dev    {"f1": 75.5688252347527, "exact_match": 65.3926206244087}
 
 # Backlog
 

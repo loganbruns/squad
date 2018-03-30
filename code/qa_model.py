@@ -119,12 +119,12 @@ class QAModel(object):
             # # Get the word embeddings for the context and question,
             # # using the placeholders self.context_ids and self.qn_ids
             # unknown_prob = 0.10
-            # probs = tf.random_uniform(tf.shape(self.context_ids))
+            probs = tf.random_uniform(tf.shape(self.context_ids))
             # # unknowns = tf.constant(UNK_ID, shape=tf.shape(self.qn_ids))
-            # unknowns = tf.ones(tf.shape(self.context_ids), dtype=tf.int32)
-            # context_ids = tf.where(probs < unknown_prob, unknowns, self.context_ids)
+            unknowns = tf.ones(tf.shape(self.context_ids), dtype=tf.int32)
+            context_ids = tf.where(probs > self.keep_prob, unknowns, self.context_ids)
             # self.context_embs = embedding_ops.embedding_lookup(embedding_matrix, self.context_ids) # shape (batch_size, context_len, embedding_size)
-            self.context_embs = embedding_ops.embedding_lookup(embedding_matrix, self.context_ids) # shape (batch_size, context_len, embedding_size)
+            self.context_embs = embedding_ops.embedding_lookup(embedding_matrix, context_ids) # shape (batch_size, context_len, embedding_size)
             self.qn_embs = embedding_ops.embedding_lookup(embedding_matrix, self.qn_ids) # shape (batch_size, question_len, embedding_size)
 
 
