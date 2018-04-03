@@ -104,7 +104,10 @@ def tokens_to_char_ids(tokens, char2id, batch_pad):
     e.g. "i do n't know" -> [9, 32, 16, 96]
     Note any character that isn't in the char2id mapping gets mapped to the id for UNK
     """
-    ids = [[char2id.get(w[:batch_pad][i], UNK_ID) for i in xrange(len(w[:batch_pad]))] for w in tokens]
+    ids = []
+    for word in tokens:
+        w = word[:batch_pad]
+        ids += [[char2id.get(w[i], UNK_ID) for i in xrange(len(w))]]
     return padded(ids, batch_pad)
 
 
