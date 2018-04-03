@@ -153,31 +153,37 @@ class QAModel(object):
             These are the result of taking (masked) softmax of logits_start and logits_end.
         """
 
-        # Calculate known masks
-        context_known_mask = tf.where(self.context_ids != UNK_ID, tf.ones(tf.shape(self.context_ids), dtype=tf.int32), tf.zeros(tf.shape(self.context_ids), dtype=tf.int32))
-        context_known_mask = tf.expand_dims(context_known_mask, 2) * tf.ones((1, self.FLAGS.embedding_size), dtype=tf.int32)
-        context_known_mask = tf.cast(context_known_mask, tf.bool)
-        qn_known_mask = tf.where(self.qn_ids != UNK_ID, tf.ones(tf.shape(self.qn_ids), dtype=tf.int32), tf.zeros(tf.shape(self.qn_ids), dtype=tf.int32))
-        qn_known_mask = tf.expand_dims(qn_known_mask, 2) * tf.ones((1, self.FLAGS.embedding_size), dtype=tf.int32)
-        qn_known_mask = tf.cast(qn_known_mask, tf.bool)
+        use_character_embeds = False
+        if use_character_embeds:
+            # Calculate known masks
+            context_known_mask = tf.where(self.context_ids != UNK_ID, tf.ones(tf.shape(self.context_ids), dtype=tf.int32), tf.zeros(tf.shape(self.context_ids), dtype=tf.int32))
+            context_known_mask = tf.expand_dims(context_known_mask, 2) * tf.ones((1, self.FLAGS.embedding_size), dtype=tf.int32)
+            context_known_mask = tf.cast(context_known_mask, tf.bool)
+            qn_known_mask = tf.where(self.qn_ids != UNK_ID, tf.ones(tf.shape(self.qn_ids), dtype=tf.int32), tf.zeros(tf.shape(self.qn_ids), dtype=tf.int32))
+            qn_known_mask = tf.expand_dims(qn_known_mask, 2) * tf.ones((1, self.FLAGS.embedding_size), dtype=tf.int32)
+            qn_known_mask = tf.cast(qn_known_mask, tf.bool)
 
-        # Use a RNN to construct word embeddings from character embeddings
-        char_encoder = CharToWordEmbedding(self.FLAGS.embedding_size, self.FLAGS.hidden_size/2, self.keep_prob)
-        context_char_embs = tf.reshape(self.context_char_embs, shape=[-1] + self.context_char_embs.get_shape().as_list()[2:4])
-        context_char_mask = tf.reshape(self.context_char_mask, shape=[-1] + self.context_char_mask.get_shape().as_list()[2:3])
-        context_alt_embs = char_encoder.build_graph(context_char_embs, context_char_mask) # (batch_size * context_len, embedding_size)
-        context_alt_embs = tf.reshape(context_alt_embs, shape=tf.shape(self.context_embs)) # (batch_size, context_len, embedding_size)
-        qn_char_embs = tf.reshape(self.qn_char_embs, shape=[-1] + self.qn_char_embs.get_shape().as_list()[2:4])
-        qn_char_mask = tf.reshape(self.qn_char_mask, shape=[-1] + self.qn_char_mask.get_shape().as_list()[2:3])
-        qn_alt_embs = char_encoder.build_graph(qn_char_embs, qn_char_mask) # (batch_size * qn_len, embedding_size)
-        qn_alt_embs = tf.reshape(qn_alt_embs, shape=tf.shape(self.qn_embs)) # (batch_size, qn_len, embedding_size)
+            # Use a RNN to construct word embeddings from character embeddings
+            char_encoder = CharToWordEmbedding(self.FLAGS.embedding_size, self.FLAGS.hidden_size/2, self.keep_prob)
+            context_char_embs = tf.reshape(self.context_char_embs, shape=[-1] + self.context_char_embs.get_shape().as_list()[2:4])
+            context_char_mask = tf.reshape(self.context_char_mask, shape=[-1] + self.context_char_mask.get_shape().as_list()[2:3])
+            context_alt_embs = char_encoder.build_graph(context_char_embs, context_char_mask) # (batch_size * context_len, embedding_size)
+            context_alt_embs = tf.reshape(context_alt_embs, shape=tf.shape(self.context_embs)) # (batch_size, context_len, embedding_size)
+            qn_char_embs = tf.reshape(self.qn_char_embs, shape=[-1] + self.qn_char_embs.get_shape().as_list()[2:4])
+            qn_char_mask = tf.reshape(self.qn_char_mask, shape=[-1] + self.qn_char_mask.get_shape().as_list()[2:3])
+            qn_alt_embs = char_encoder.build_graph(qn_char_embs, qn_char_mask) # (batch_size * qn_len, embedding_size)
+            qn_alt_embs = tf.reshape(qn_alt_embs, shape=tf.shape(self.qn_embs)) # (batch_size, qn_len, embedding_size)
 
-        self.loss_char_embedding = .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(context_known_mask, self.context_embs - context_alt_embs, tf.zeros(tf.shape(self.context_embs))), axis=1), axis=0))
-        self.loss_char_embedding += .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(qn_known_mask, self.qn_embs - qn_alt_embs, tf.zeros(tf.shape(self.qn_embs))), axis=1), axis=0))
+            self.loss_char_embedding = .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(context_known_mask, self.context_embs - context_alt_embs, tf.zeros(tf.shape(self.context_embs))), axis=1), axis=0))
+            self.loss_char_embedding += .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(qn_known_mask, self.qn_embs - qn_alt_embs, tf.zeros(tf.shape(self.qn_embs))), axis=1), axis=0))
 
-        # Replace unknown context embs with constructed word embeddings
-        context_embs = tf.where(context_known_mask, self.context_embs, context_alt_embs)
-        qn_embs = tf.where(qn_known_mask, self.qn_embs, qn_alt_embs)
+            # Replace unknown context embs with constructed word embeddings
+            context_embs = tf.where(context_known_mask, self.context_embs, context_alt_embs)
+            qn_embs = tf.where(qn_known_mask, self.qn_embs, qn_alt_embs)
+        else:
+            self.loss_char_embedding = 0
+            context_embs = self.context_embs
+            qn_embs = self.qn_embs
 
         # Use a RNN to get hidden states for the context and the question
         # Note: here the RNNEncoder is shared (i.e. the weights are the same)
