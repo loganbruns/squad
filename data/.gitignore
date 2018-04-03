@@ -1,0 +1,6 @@
+*.context
+*.span
+*.question
+*.answer
+*.json
+glove.*
