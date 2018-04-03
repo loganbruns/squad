@@ -82,3 +82,49 @@ def get_glove(glove_path, glove_dim):
     assert idx == final_vocab_size
 
     return emb_matrix, word2id, id2word
+
+def get_characters(character_path, character_dim):
+    """Reads list of characters .txt file and returns embedding matrix and mappings from characters to character ids.
+
+    Input:
+      character_path: path to characters.txt
+      character_dim: integer
+
+    Returns:
+      emb_matrix: Numpy array shape (len(characters)+2, character_dim) containing glove embeddings
+        (plus PAD and UNK embeddings in first two rows).
+        The rows of emb_matrix correspond to the word ids given in char2id and id2char
+      char2id: dictionary mapping char (string) to char id (int)
+      id2char: dictionary mapping char id (int) to char (string)
+    """
+
+    print "Loading characters from file: %s" % character_path
+    vocab_size = 932
+    
+    char2id = {}
+    id2char = {}
+
+    # put start tokens in the dictionaries
+    idx = 0
+    for word in _START_VOCAB:
+        char2id[word] = idx
+        id2char[idx] = word
+        idx += 1
+
+    # go through glove vecs
+    with open(character_path, 'r') as fh:
+        for line in tqdm(fh, total=vocab_size):
+            char = line.strip()
+            char2id[char] = idx
+            id2char[idx] = char
+            idx += 1
+
+    final_vocab_size = vocab_size + len(_START_VOCAB)
+    assert len(char2id) == final_vocab_size
+    assert len(id2char) == final_vocab_size
+    assert idx == final_vocab_size
+
+    emb_matrix = np.random.randn(final_vocab_size, character_dim)
+
+    return emb_matrix, char2id, id2char
+

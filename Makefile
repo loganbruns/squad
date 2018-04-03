@@ -1,5 +1,5 @@
-EXPERIMENT=v22
-DESCRIPTION="$(EXPERIMENT): context word dropout"
+EXPERIMENT=v23
+DESCRIPTION="$(EXPERIMENT): character embeddings"
 WORKSPACE=main::cs224n-lbruns
 
 all:
@@ -89,6 +89,9 @@ local-dev:
 show-examples:
 	python code/main.py --experiment_name=$(EXPERIMENT) --mode=show_examples
 
+show-examples-cpu:
+	python code/main.py --experiment_name=$(EXPERIMENT) --mode=show_examples --gpu=-1
+
 train:
 	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train
 
@@ -102,4 +105,4 @@ train-very-slow:
 	python code/main.py --experiment_name=$(EXPERIMENT) --mode=train --learning_rate=0.0001 --max_gradient_norm=2.5
 
 tensorboard:
-	(cd experiments; nohup tensorboard --logdir=. --port=5678 &)
+	(cd experiments; nohup tensorboard --logdir=. --port=5678 --db sqlite:.tensorboard.db &)

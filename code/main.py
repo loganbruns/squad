@@ -26,7 +26,7 @@ import logging
 import tensorflow as tf
 
 from qa_model import QAModel
-from vocab import get_glove
+from vocab import get_glove, get_characters
 from official_eval_helper import get_json_data, generate_answers
 
 
@@ -48,10 +48,11 @@ tf.app.flags.DEFINE_float("learning_rate", 0.001, "Learning rate.")
 # tf.app.flags.DEFINE_float("learning_rate", 0.5, "Learning rate for adadelta.")
 tf.app.flags.DEFINE_float("max_gradient_norm", 5.0, "Clip gradients to this norm.")
 tf.app.flags.DEFINE_float("dropout", 0.15, "Fraction of units randomly dropped on non-recurrent connections.")
-tf.app.flags.DEFINE_integer("batch_size", 100, "Batch size to use")
+tf.app.flags.DEFINE_integer("batch_size", 25, "Batch size to use")
 tf.app.flags.DEFINE_integer("hidden_size", 200, "Size of the hidden states")
 tf.app.flags.DEFINE_integer("context_len", 400, "The maximum context length of your model")
 tf.app.flags.DEFINE_integer("question_len", 30, "The maximum question length of your model")
+tf.app.flags.DEFINE_integer("word_len", 40, "The maximum word length of your model")
 tf.app.flags.DEFINE_integer("embedding_size", 100, "Size of the pretrained word vectors. This needs to be one of the available GloVe dimensions: 50/100/200/300")
 
 # How often to print, save, eval
@@ -63,6 +64,7 @@ tf.app.flags.DEFINE_integer("keep", 1, "How many checkpoints to keep. 0 indicate
 # Reading and saving data
 tf.app.flags.DEFINE_string("train_dir", "", "Training directory to save the model parameters and other info. Defaults to experiments/{experiment_name}")
 tf.app.flags.DEFINE_string("glove_path", "", "Path to glove .txt file. Defaults to data/glove.6B.{embedding_size}d.txt")
+tf.app.flags.DEFINE_string("character_path", "", "Path to characters .txt file. Defaults to data/characters.txt")
 tf.app.flags.DEFINE_string("data_dir", DEFAULT_DATA_DIR, "Where to find preprocessed SQuAD data for training. Defaults to data/")
 tf.app.flags.DEFINE_string("ckpt_load_dir", "", "For official_eval mode, which directory to load the checkpoint fron. You need to specify this for official_eval mode.")
 tf.app.flags.DEFINE_string("json_in_path", "", "For official_eval mode, path to JSON input file. You need to specify this for official_eval_mode.")
@@ -121,9 +123,11 @@ def main(unused_argv):
 
     # Define path for glove vecs
     FLAGS.glove_path = FLAGS.glove_path or os.path.join(DEFAULT_DATA_DIR, "glove.6B.{}d.txt".format(FLAGS.embedding_size))
+    FLAGS.character_path = FLAGS.character_path or os.path.join(DEFAULT_DATA_DIR, "characters.txt")
 
     # Load embedding matrix and vocab mappings
     emb_matrix, word2id, id2word = get_glove(FLAGS.glove_path, FLAGS.embedding_size)
+    char_emb_matrix, char2id, id2char = get_characters(FLAGS.character_path, FLAGS.embedding_size)
 
     # Get filepaths to train/dev datafiles for tokenized queries, contexts and answers
     train_context_path = os.path.join(FLAGS.data_dir, "train.context")
@@ -134,7 +138,7 @@ def main(unused_argv):
     dev_ans_path = os.path.join(FLAGS.data_dir, "dev.span")
 
     # Initialize model
-    qa_model = QAModel(FLAGS, id2word, word2id, emb_matrix)
+    qa_model = QAModel(FLAGS, id2word, word2id, emb_matrix, id2char, char2id)
 
     # Some GPU settings
     config=tf.ConfigProto()
@@ -192,7 +196,7 @@ def main(unused_argv):
 
             # Get a predicted answer for each example in the data
             # Return a mapping answers_dict from uuid to answer
-            answers_dict = generate_answers(sess, qa_model, word2id, qn_uuid_data, context_token_data, qn_token_data)
+            answers_dict = generate_answers(sess, qa_model, word2id, char2id, qn_uuid_data, context_token_data, qn_token_data)
 
             # Write the uuid->answer mapping a to json file in root dir
             print "Writing predictions to %s..." % FLAGS.json_out_path

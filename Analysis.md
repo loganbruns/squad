@@ -104,3 +104,11 @@ array([28134, 22194, 12603,  6630,  4094,  2675,  1974,  1501,  1069,
 >>> len(filter(lambda x: x > 15, span_lens))
 1773
 ```
+
+# Characters
+
+```
+$ cat data/train.context data/train.question | tr -d ' ' | sed 's/\(.\)/\1\n/g' | sort | uniq > data/characters.txt
+$ wc -l data/characters.txt 
+932 data/characters.txt
+```

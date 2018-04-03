@@ -73,15 +73,15 @@ class RNNEncoder(object):
             # Note: fw_out and bw_out are the hidden states for every timestep.
             # Each is shape (batch_size, seq_len, hidden_size).
             # (fw_out, bw_out), _ = tf.nn.bidirectional_dynamic_rnn(self.rnn_cell_fw, self.rnn_cell_bw, inputs, input_lens, swap_memory=True, dtype=tf.float32)
-            out, _, _ = tf.contrib.rnn.stack_bidirectional_dynamic_rnn(self.rnn_cell_fw, self.rnn_cell_bw, inputs, sequence_length=input_lens, dtype=tf.float32)
+            out, last_fw_out, last_bw_out = tf.contrib.rnn.stack_bidirectional_dynamic_rnn(self.rnn_cell_fw, self.rnn_cell_bw, inputs, sequence_length=input_lens, dtype=tf.float32)
 
-            # Concatenate the forward and backward hidden states
-            # out = tf.concat([fw_out, bw_out], 2)
+            # Concatenate the last forward and backward hidden states
+            last_out = tf.concat([last_fw_out, last_bw_out], 1)
 
             # Apply dropout
             out = tf.nn.dropout(out, self.keep_prob)
 
-            return out
+            return out, last_out
 
 
 class SimpleSoftmaxLayer(object):
@@ -537,3 +537,38 @@ class SelfAttn(object):
             a = tf.matmul(attn_dist, contexts) # shape (batch_size, num_contexts, contexts_vec_size)
 
             return a, W_loss
+
+
+class CharToWordEmbedding(object):
+    """Module for converting sequence of character embeddings to a word embedding"""
+
+    def __init__(self, embedding_size, hidden_size, keep_prob):
+        """
+        Inputs:
+          hidden_size: int. Hidden size of the RNN
+          keep_prob: Tensor containing a single scalar that is the keep probability (for dropout)
+        """
+        with vs.variable_scope("CharToWordEmbedding"):
+            self.encoder = RNNEncoder(hidden_size, keep_prob)
+            self.embedding_size = embedding_size
+
+    def build_graph(self, characters, characters_mask):
+        """
+
+        Inputs:
+          characters: Tensor shape (batch_size, num_characters, character_vec_size).
+          characters_mask: Tensor shape (batch_size, num_characters).
+            1s where there's real input, 0s where there's padding
+
+        Outputs:
+          output: Tensor shape (batch_size, num_characters, character_vec_size).
+            This is the attention output
+        """
+        with vs.variable_scope("CharToWordEmbedding"):
+            _, hiddens = self.encoder.build_graph(characters, characters_mask) # (batch_size, hidden_size*2)
+
+            with vs.variable_scope("ProjectToEmbedding", reuse=tf.AUTO_REUSE):
+                hiddens = tf.reduce_sum(hiddens, axis=[0, 1, 2])
+                hiddens = tf.contrib.layers.layer_norm(hiddens)
+                embeds = tf.contrib.layers.fully_connected(hiddens, num_outputs=self.embedding_size)
+                return embeds
