@@ -1268,15 +1268,46 @@ Epoch 3, Iter 13000, Dev F1 score: 0.697966, Dev EM score: 0.549322
 Sanity {"f1": 66.83285682073218, "exact_match": 59.25925925925926}
 Dev    {"f1": 75.5688252347527, "exact_match": 65.3926206244087}
 
+## v22_1 v22 again
+
+```
+INFO:root:Epoch 12, Iter 10000, dev loss: 3.090052
+INFO:root:Epoch 12, Iter 10000, Train F1 score: 0.902077, Train EM score: 0.800000
+INFO:root:Epoch 12, Iter 10000, Dev F1 score: 0.701377, Dev EM score: 0.555192
+```
+
+Sanity {"f1": 66.8332710558959, "exact_match": 60.0}
+Dev    {"f1": 75.65291222649147, "exact_match": 65.600756859035}
+
+## v23 add support for character embeddings using bi-LSTM and loss relative to word embeddings
+
+```
+INFO:root:Epoch 6, Iter 21500, dev loss: 3.127731
+INFO:root:Epoch 6, Iter 21500, Train F1 score: 0.860120, Train EM score: 0.743000
+INFO:root:Epoch 6, Iter 21500, Dev F1 score: 0.684444, Dev EM score: 0.533641
+```
+
+Sanity {"f1": 64.90212606919535, "exact_match": 56.79012345679013}
+Dev    {"f1": 74.04824322829415, "exact_match": 63.40586565752129}
+
+## v23_1 use character embedding loss relative to fixed word embeddings
+
+Aborted somewhat early since character embedding loss was not decreasing as expected
+
+```
+Epoch 4, Iter 11000, dev loss: 2.922910
+Epoch 4, Iter 11000, Train F1 score: 0.846658, Train EM score: 0.735000
+Epoch 4, Iter 11000, Dev F1 score: 0.678740, Dev EM score: 0.529984
+```
+
+Sanity {"f1": 63.87320202955005, "exact_match": 56.41975308641975}
+Dev    {"f1": 73.33039466327196, "exact_match": 63.01797540208136}
+
 # Backlog
 
 - layer norm at end of attentions before concat
 
 - train half of embeddings
-
-- adjust dropout
-
-- adadelta optimizer
 
 - n-grams
 

@@ -137,8 +137,10 @@ class QAModel(object):
             # Get the word and character embeddings for the context and question,
             # using the placeholders self.context_ids and self.qn_ids
             self.context_embs = embedding_ops.embedding_lookup(embedding_matrix, self.context_ids) # shape (batch_size, context_len, embedding_size)
+            self.context_fixed_embs = embedding_ops.embedding_lookup(fixed_embedding_matrix, self.context_ids) # shape (batch_size, context_len, embedding_size)
             self.context_char_embs = embedding_ops.embedding_lookup(char_embedding_matrix, self.context_char_ids) # shape (batch_size, context_len, word_len, embedding_size)
             self.qn_embs = embedding_ops.embedding_lookup(embedding_matrix, self.qn_ids) # shape (batch_size, question_len, embedding_size)
+            self.qn_fixed_embs = embedding_ops.embedding_lookup(fixed_embedding_matrix, self.qn_ids) # shape (batch_size, question_len, embedding_size)
             self.qn_char_embs = embedding_ops.embedding_lookup(char_embedding_matrix, self.qn_char_ids) # shape (batch_size, question_len, word_len, embedding_size)
 
 
@@ -153,7 +155,7 @@ class QAModel(object):
             These are the result of taking (masked) softmax of logits_start and logits_end.
         """
 
-        use_character_embeds = False
+        use_character_embeds = True
         if use_character_embeds:
             # Calculate known masks
             context_known_mask = tf.where(self.context_ids != UNK_ID, tf.ones(tf.shape(self.context_ids), dtype=tf.int32), tf.zeros(tf.shape(self.context_ids), dtype=tf.int32))
@@ -174,8 +176,8 @@ class QAModel(object):
             qn_alt_embs = char_encoder.build_graph(qn_char_embs, qn_char_mask) # (batch_size * qn_len, embedding_size)
             qn_alt_embs = tf.reshape(qn_alt_embs, shape=tf.shape(self.qn_embs)) # (batch_size, qn_len, embedding_size)
 
-            self.loss_char_embedding = .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(context_known_mask, self.context_embs - context_alt_embs, tf.zeros(tf.shape(self.context_embs))), axis=1), axis=0))
-            self.loss_char_embedding += .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(qn_known_mask, self.qn_embs - qn_alt_embs, tf.zeros(tf.shape(self.qn_embs))), axis=1), axis=0))
+            self.loss_char_embedding = .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(context_known_mask, self.context_fixed_embs - context_alt_embs, tf.zeros(tf.shape(context_alt_embs))), axis=1), axis=0))
+            self.loss_char_embedding += .0005 * tf.norm(tf.reduce_mean(tf.reduce_mean(tf.where(qn_known_mask, self.qn_fixed_embs - qn_alt_embs, tf.zeros(tf.shape(qn_alt_embs))), axis=1), axis=0))
 
             # Replace unknown context embs with constructed word embeddings
             context_embs = tf.where(context_known_mask, self.context_embs, context_alt_embs)
