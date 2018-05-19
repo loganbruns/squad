@@ -1,4 +1,4 @@
-EXPERIMENT=v23_1
+EXPERIMENT=v23_2
 DESCRIPTION="$(EXPERIMENT): character embeddings"
 WORKSPACE=main::cs224n-lbruns
 

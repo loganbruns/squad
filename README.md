@@ -1303,6 +1303,17 @@ Epoch 4, Iter 11000, Dev F1 score: 0.678740, Dev EM score: 0.529984
 Sanity {"f1": 63.87320202955005, "exact_match": 56.41975308641975}
 Dev    {"f1": 73.33039466327196, "exact_match": 63.01797540208136}
 
+## v23_2 use character embedding cumulative loss relative to fixed word embeddings
+
+```
+INFO:root:Epoch 9, Iter 29500, dev loss: 3.310620
+INFO:root:Epoch 9, Iter 29500, Train F1 score: 0.901956, Train EM score: 0.797000
+INFO:root:Epoch 9, Iter 29500, Dev F1 score: 0.687380, Dev EM score: 0.539128
+```
+
+Sanity {"f1": 67.35467317914984, "exact_match": 60.24691358024691}
+Dev    {"f1": 74.31806448995515, "exact_match": 64.03973509933775}
+
 # Backlog
 
 - layer norm at end of attentions before concat
